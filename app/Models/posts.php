@@ -17,4 +17,10 @@ class Posts extends Model
         'value'
     ];
 
+    // Cast automatique du champ "value" en float
+    // En quel cas, on ne passe pas par le prepareForValidation() parce que déja défini dans le modèle...
+    protected $casts = [
+        'value' => 'float', 
+    ];
+
 }

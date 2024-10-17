@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use App\Models\Posts;
 use Illuminate\Support\Facades\Session;
 
+use Illuminate\Support\Facades\Validator;
+
+
 class PostsController extends Controller {
     
     // LISTER TOUT LES POSTS 
@@ -172,4 +175,28 @@ public function createNewPost() {
 }
 
 
+// GERER LE TRATEMENT SANS LES FORMS REQUESTS
+public function storeWithoutFormRequests(Request $request) {
+
+
+    $validator = Validator::make($request->all(), [ // Ne pas oublier d'ajouter dans les déclarations tout en haut du fichier : use Illuminate\Support\Facades\Validator;
+
+        'title' => 'required|string|max:255',
+        'value' => 'required|numeric|min:0|max:5',
+    ]);
+
+    // Le hook before pour manipuler les données avant validation
+    $validator->after(function ($validator) use ($request) {
+        $request->merge([
+            'title' => ucfirst($request->title),  // Exemple : Mettre la première lettre du titre en majuscule 
+        ]);
+    });
+
+    if ($validator->fails()) {
+
+        return redirect()->back()  // Redirige vers la page précédente
+        ->withErrors($validator)  // Ajoute les erreurs à la session
+        ->withInput();  // Conserve les anciennes données du formulaire
+    }
+}
 }

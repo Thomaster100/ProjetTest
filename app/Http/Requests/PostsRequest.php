@@ -54,4 +54,17 @@ class PostsRequest extends FormRequest
         ];
         
     }
+
+    // Méthode qui permet de modifier les données avant validation
+
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            'value' => (float) $this->value, // Exemple : Convertir la valeur en float avant validation (voir le fichier modèle Posts)
+        ]);
+
+        // On pourrait aussi l'utiliser pour ajouter des vérification supplémentaires...
+
+        // On pourrait tres bien aussi utiliser un middleware (sera vu plus tard dans le cours)
+    }
 }
