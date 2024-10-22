@@ -45,5 +45,5 @@ Exemples :
 // Lister les branches locales
 ```git branch```
 
-// Lister les branches distante
+// Lister les branches distantes
 ```git ls-remote```
