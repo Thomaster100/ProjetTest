@@ -103,7 +103,7 @@ public function createNewPost() {
         Posts::create($validatedData);
     
         // Redirection après création avec un message de succès
-        return redirect()->route('posts.index')->with('success', 'Post créé avec succès!');
+        return redirect()->route('postList')->with('success', 'Post créé avec succès!');
     }
 
 
@@ -134,7 +134,7 @@ public function createNewPost() {
 
     // // $post->update($validatedData);
 
-    //     return redirect()->route('posts.index')->with('success', 'Post mis à jour avec succès!');
+    //     return redirect()->route('postList')->with('success', 'Post mis à jour avec succès!');
     
     // }
 
@@ -151,7 +151,7 @@ public function createNewPost() {
         // OU $post->update($validatedData);
 
         $post->save();
-        return redirect()->route('posts.index')->with('success', 'Post mis à jour avec succès!');
+        return redirect()->route('postList')->with('success', 'Post mis à jour avec succès!');
     }
 
     // DESTROY
@@ -162,7 +162,7 @@ public function createNewPost() {
     // Suppression physique
     $post->delete();
 
-    return redirect()->route('posts.index')->with('success', 'Post supprimé avec succès!');
+    return redirect()->route('postList')->with('success', 'Post supprimé avec succès!');
 }
 
     // Par ID
@@ -171,7 +171,7 @@ public function createNewPost() {
     $post = Posts::findOrFail($id);
     $post->delete();
 
-    return redirect()->route('posts.index')->with('success', 'Post supprimé avec succès!');
+    return redirect()->route('postList')->with('success', 'Post supprimé avec succès!');
 }
 
 
