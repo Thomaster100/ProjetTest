@@ -55,6 +55,19 @@ class PostsController extends Controller {
         
     }
 
+    public function addCommentsToPosts() {
+
+    $posts = Posts::all();
+    foreach ($posts as $post) {
+        $post->comments()->create([
+            'author' => 'Auteur Anonyme',
+            'content' => 'Ceci est un commentaire pour ' . $post->title,
+        ]);
+    }
+
+    return redirect()->route('postList')->with('success', 'Commentaires ajoutés aux posts existants !');
+}
+
     // STORE -> mauvaise pratique
 
 //     public function store(PostsRequest $request) {

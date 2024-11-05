@@ -47,3 +47,45 @@ Exemples :
 
 // Lister les branches distantes
 ```git ls-remote```
+
+// Relations 
+
+---- Pour créer une relation de type one-to-many --- 
+
+-- COTE MIGRATION --- 
+
+- Créer le fichier de migration avec : 
+
+- une réference à l'entité demandé avec son id 
+
+exemple avec les commentaires : 
+
+ // Référence vers le post associé
+ `$table->unsignedBigInteger('post_id');` 
+
+ // Clé étrangère pour assurer la relation avec les Posts
+            `$table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');`
+
+-- COTE MODEL --- 
+
+Du coté des posts
+
+ **Est ce que mon post A UN OU PLUSIEURS (hasMany()) commentaires ?**
+
+exemple : 
+```
+    // Obtenir tout les commentaires d'un post
+
+    public function comments() {
+     return $this->hasMany(Comment::class, 'post_id');
+    }
+```
+ **A qui APPARTIENT (belongsTo) cette entité (pour quel entité)**
+
+    // Comment Model (association Posts)
+
+    public function post() {
+        // Appartenance a l'entité posts
+        return $this->belongsTo(Posts::class, 'post_id');
+    }
+    

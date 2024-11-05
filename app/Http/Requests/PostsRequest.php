@@ -56,7 +56,6 @@ class PostsRequest extends FormRequest
     }
 
     // Méthode qui permet de modifier les données avant validation
-
     protected function prepareForValidation()
     {
         $this->merge([
