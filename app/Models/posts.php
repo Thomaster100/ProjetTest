@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Comment;
 
 class Posts extends Model
 {
@@ -22,5 +23,10 @@ class Posts extends Model
     protected $casts = [
         'value' => 'float', 
     ];
+
+    // Obtenir tout les commentaires d'un post
+    public function comments() {
+     return $this->hasMany(Comment::class, 'post_id');
+    }
 
 }
