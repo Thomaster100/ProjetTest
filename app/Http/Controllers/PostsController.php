@@ -281,11 +281,12 @@ public function storeWithoutFormRequests(Request $request) {
   public function makeComplexRequestWithPosts() {
 
     $posts = DB::table('posts')
-    ->join('category_post', 'posts.id', '=', 'category_post.post_id') // 1er jointure
-    ->join('categories', 'categories.id', '=', 'category_post.category_id') // 2eme
-    ->select('posts.title', 'categories.name as category_name', 'posts.value')
-    ->where('posts.value', '>', 4.0)
-    ->get();
+                ->select('posts.title', 'categories.name as category_name', 'posts.value')
+                ->join('category_post', 'posts.id', '=', 'category_post.post_id') // 1ere jointure
+                ->join('categories', 'categories.id', '=', 'category_post.category_id') // 2eme
+                ->groupBy('category.')
+                ->where('posts.value', '>', 4.0)
+                ->get();
 
     return $posts;
   }
@@ -302,7 +303,7 @@ public function storeWithoutFormRequests(Request $request) {
                 return $query->where('author', $author);
             })
             ->when($minValue, function ($query, $minValue) {
-                return $query->where('value', '>=', $minValue);
+                return $query->where('value', '>=', 3);
             })
             ->get();
             
@@ -312,8 +313,8 @@ public function storeWithoutFormRequests(Request $request) {
   // REQUETE AVEC GROUPE DE CONDITIONS
   public function makeMoreConditionnalRequest() {
 
-    $posts = DB::table('posts')
-    ->where(function ($query) {
+    $posts = DB::table('posts')->where(function ($query) {
+
         $query->where('author', 'John Doe')
               ->orWhere('author', 'Jane Doe'); // Dans ce cas, soit la 1ere condition ou la 2eme.
     })
