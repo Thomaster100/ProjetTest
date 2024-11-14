@@ -6,7 +6,7 @@ use App\Http\Requests\PostsRequest;
 use Illuminate\Http\Request;
 use App\Models\Posts;
 use Illuminate\Support\Facades\Session;
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -191,9 +191,8 @@ public function createNewPost() {
 // GERER LE TRATEMENT SANS LES FORMS REQUESTS
 public function storeWithoutFormRequests(Request $request) {
 
-
-    $validator = Validator::make($request->all(), [ // Ne pas oublier d'ajouter dans les déclarations tout en haut du fichier : use Illuminate\Support\Facades\Validator;
-
+    // Ne pas oublier d'ajouter dans les déclarations tout en haut du fichier : use Illuminate\Support\Facades\Validator;
+    $validator = Validator::make($request->all(), [ 
         'title' => 'required|string|max:255',
         'value' => 'required|numeric|min:0|max:5',
     ]);
@@ -211,5 +210,154 @@ public function storeWithoutFormRequests(Request $request) {
         ->withErrors($validator)  // Ajoute les erreurs à la session
         ->withInput();  // Conserve les anciennes données du formulaire
     }
+  } 
+
+
+  // ---------------- COMPARAISON ELOQUENT / QUERY BUILDER ----------------//
+
+
+  /*  POUR DECLARER LE QUERY BUILDER => use Illuminate\Support\Facades\DB; en haut de votre fichier */
+
+  /* REQUETES AVANCES (ELOQUENT) */
+  
+
+   // ---- AGGREGATIONS (computer sur un ensemble de valeurs) ---- //
+   // EXEMPLES : SELECT COUNT(*) FROM..., SELECT MIN(*) FROM..., MAX(*) en SQL
+   public function makeAggregation() {
+    
+    $postsByAuthor = Posts::select('author', DB::raw('COUNT(*) as total_posts')) // L'aggrégat se fait avec la fonction COUNT(*)
+    ->groupBy('author')
+    ->get();
+    
+    return $postsByAuthor;
+  }
+
+   // ---- EXEMPLE DE SOUS-REQUETE ---- //
+  // Obtenir le nombre de records liés à l'objet principal (donc les commentaires associés au post)
+  public function getPostWithComments() { 
+
+    $posts = Posts::withCount('comments')->get();
+
+    foreach ($posts as $post) {
+        echo $post->title . ' a ' . $post->comments_count . ' commentaires.'; 
+    }
+
+    // withCount('comments') ajoute un attribut 'comments_count' à chaque posts... qui représente le nombre de commentaires associés au post. 
+    // Equivaut à une sous-requête pour compter les commentaires.
+
+    return $posts;
 }
+
+  // REQUETE AVEC FILTRES
+  public function makeFilteredRequest() {
+
+    $posts = Posts::with('categories')
+                    ->where('value', '>', 4.0)
+                    ->get();
+    return $posts;
+  }
+
+    // EXEMPLE DE EXISTS (APPROCHE ELOQUENT)
+    public function littleRequestWithClause() {
+
+        $posts = Posts::whereHas('comments')->get(); // Récupérer les posts qui ont des commentaires
+        return $posts;
+    }
+
+  /* REQUETES AVANCES (QUERY BUILDER) */
+
+  // SOUS-REQUETE 
+  public function makePostsSubRequest() {
+
+    $posts = DB::table('posts')
+    ->select('posts.*', DB::raw('(SELECT COUNT(*) FROM comments WHERE comments.post_id = posts.id) as comment_count'))
+    // DB::raw permet de créer sa requete EN BRUT (raw...) sous forme de string.
+    ->get();
+
+    return $posts;
+  }
+
+  // REQUETE AVEC PLUSIEURS JOINTURES 
+  public function makeComplexRequestWithPosts() {
+
+    $posts = DB::table('posts')
+                ->select('posts.title', 'categories.name as category_name', 'posts.value')
+                ->join('category_post', 'posts.id', '=', 'category_post.post_id') // 1ere jointure
+                ->join('categories', 'categories.id', '=', 'category_post.category_id') // 2eme
+                ->groupBy('category.')
+                ->where('posts.value', '>', 4.0)
+                ->get();
+
+    return $posts;
+  }
+
+  // REQUETE AVEC PLUSIEURS CONDITIONS
+  public function makeConditionnalRequest() {
+
+    $author = 'John Doe'; 
+    $minValue = 4.0;
+
+        $posts = DB::table('posts')
+            ->when($author, function ($query, $author) { 
+                // utilisation des fonctions anonymes (closure) en guise de callback... qui peux se combiner avec une autre condition
+                return $query->where('author', $author);
+            })
+            ->when($minValue, function ($query, $minValue) {
+                return $query->where('value', '>=', 3);
+            })
+            ->get();
+            
+    return $posts;
+  }
+
+  // REQUETE AVEC GROUPE DE CONDITIONS
+  public function makeMoreConditionnalRequest() {
+
+    $posts = DB::table('posts')->where(function ($query) {
+
+        $query->where('author', 'John Doe')
+              ->orWhere('author', 'Jane Doe'); // Dans ce cas, soit la 1ere condition ou la 2eme.
+    })
+    ->where('value', '>', 3.5)
+    ->get();
+
+    return $posts;
+  }
+
+  // REQUETE AVEC TRI ET LIMITE
+  public function makeRequestWithSortAndLimit() {
+
+    $posts = DB::table('posts')
+    ->orderBy('value', 'desc') // les orderBy sont chainables..
+    ->orderBy('created_at', 'desc')
+    ->limit(5) // pour limiter ou faire une pagination DB par exemple
+    ->get();
+
+    return $posts;
+  }
+
+  // REQUETES AVEC EXCLUSIONS
+  public function makeRequestWithExclusions() {
+
+    $excludedAuthors = ['John Doe', 'Jane Doe'];
+    $posts = DB::table('posts')
+        ->whereNotIn('author', $excludedAuthors)
+        ->get();
+
+    return $posts;
+  }
+
+  // REQUETES AVEC CLAUSE D'EXISTENCE
+  public function requestWithClause() {
+
+    $posts = DB::table('posts')->whereExists(function ($query) { // WhereExists marche aussi avec des closures...
+    $query->select(DB::raw(1))
+              ->from('comments')
+              ->whereColumn('comments.post_id', 'posts.id'); // whereColumn() pour comparer les colonnes...
+    })->get();
+
+    return $posts;
+  }
+
 }
+ 
