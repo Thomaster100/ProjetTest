@@ -89,3 +89,16 @@ exemple :
         return $this->belongsTo(Posts::class, 'post_id');
     }
     
+----------------------------------------------------------------
+
+-- Ajout de librairies (liste des commandes) / configuration -- 
+
+-- BOOTSTRAP (via NPM) --
+
+- `npm init`
+- `npm i (install) bootstrap`
+- `Pour ajouter une version spécifique : npm i bootstrap@(numéro de version)`
+- `Ex: npm i bootstrap 4.4.3`
+
+-> Ensuite ajouter les imports bootstrap pour le JS (si pas automatiquement ajouté par la commande npm) => `import './bootstrap'` 
+-> idem pour le CSS - a ajouter (`@import "bootstrap/dist/css/bootstrap.min.css";` )
