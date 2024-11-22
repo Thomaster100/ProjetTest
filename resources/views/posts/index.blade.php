@@ -5,14 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Liste des Posts</title>
+    @vite(['resources/css/app.css'])
 </head>
 <body>
 
+    <div class="container">
     {{-- Boucle templating blade  --}}
     @foreach($postList as $post)
         <div class="row">
-            <div class="col-md-8 post-container">
-                <p>{{ $post->title }}</p>
+            <div class="col-md-8 m-1 p-1 post-container">
+                <p class="h2">{{ $post->title }}</p>
                 <p>{{ $post->content }}</p>
                 <p>{{ $post->author }}</p>
                 <p>{{ $post->value }}</p>
@@ -28,11 +30,11 @@
                 --}}
 
                 {{-- Bonne pratique --}}
-                <a href="{{ route('posts.edit', $post) }}">Modifier</a>
+                <a class="btn btn-secondary" href="{{ route('posts.edit', $post) }}">Modifier</a>
                 <form method="POST" action="{{ route('posts.destroy', $post) }}">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" onclick="return confirm('Voulez-vous vraiment supprimer ce post ?');">Supprimer</button>
+                    <button class="btn btn-primary" type="submit" onclick="return confirm('Voulez-vous vraiment supprimer ce post ?');">Supprimer</button>
                 </form>
 
                 {{-- Bonne pratique avec l'ID --}}
@@ -46,6 +48,9 @@
             </div>
         </div>
     @endforeach
+    </div>
 
+
+    @vite(['resources/js/app.js'])
 </body>
 </html>
