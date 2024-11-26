@@ -135,14 +135,3 @@ public function handle($request, Closure $next)
     return $next($request);
 }
 ```
-
----
-
-## **6. Bonnes Pratiques**
-
-1. **Limitez la taille des données stockées :** Les sessions ne doivent pas contenir de gros volumes de données.
-2. **Ne stockez pas de données sensibles :** Les sessions peuvent être compromises si elles ne sont pas correctement configurées.
-3. **Préférez un driver adapté :** Utilisez `redis` ou `database` pour une meilleure performance dans des applications à grande échelle.
-
----
-
