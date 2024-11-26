@@ -27,7 +27,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $hidden = [
+    protected $hidden = [ // si pas existant - à ajouter dans vos modèles
         'password',
         'remember_token',
     ];
