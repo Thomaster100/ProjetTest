@@ -11,13 +11,19 @@ use Illuminate\Support\Facades\Validator;
 
 
 class PostsController extends Controller {
-    
-    // LISTER TOUT LES POSTS 
+
+    // LISTER TOUT LES POSTS
     public function index() {
 
-        // Récuperer tout les posts
-        $postList = Posts::all();
-        return view('posts.index', compact('postList'));    
+        //vérifier si user authentifié avant d'afficher postList sinon redirection vers login
+        if(auth()->check()) {
+            // Récuperer tout les posts
+            $postList = Posts::all();
+            return view('posts.index', compact('postList'));
+        }else{
+            return view('auth.login');
+        }
+
     }
 
     // CREER DES POSTS (SANS FORMULAIRE, JUSTE POUR REMPLIR LA BASE DE DONNEE)
@@ -26,33 +32,33 @@ class PostsController extends Controller {
         // On modifiera plus tard mais on aura le formulaire de création ici (la vue...)
         Posts::create([
           'title' => 'Les Ombres du Crepuscule',
-          'content' => 'Dans une ville où le soleil ne se couche jamais, un enquêteur découvre que certaines ombres renferment un secret vieux de plusieurs siècles.', 
-          'author' => 'Camille Bertrand', 
-          'value' => '4.5'   
+          'content' => 'Dans une ville où le soleil ne se couche jamais, un enquêteur découvre que certaines ombres renferment un secret vieux de plusieurs siècles.',
+          'author' => 'Camille Bertrand',
+          'value' => '4.5'
         ]);
 
         Posts::create([
         'title' => 'Horloge des Rêves',
-        'content' => 'Un horloger découvre une montre ancienne qui permet de contrôler le monde des rêves, mais chaque manipulation a un prix.', 
-        'author' => 'Nathan Lemoine', 
-        'value' => '3.7'   
+        'content' => 'Un horloger découvre une montre ancienne qui permet de contrôler le monde des rêves, mais chaque manipulation a un prix.',
+        'author' => 'Nathan Lemoine',
+        'value' => '3.7'
         ]);
 
         Posts::create([
         'title' => 'Au-delà des Étoiles Brisées',
-        'content' => 'Après la destruction de leur planète, un groupe de survivants doit naviguer dans l\'univers et affronter des créatures mystérieuses pour trouver un nouveau foyer.', 
-        'author' => 'Elisa Durand', 
-        'value' => '4.2'   
+        'content' => 'Après la destruction de leur planète, un groupe de survivants doit naviguer dans l\'univers et affronter des créatures mystérieuses pour trouver un nouveau foyer.',
+        'author' => 'Elisa Durand',
+        'value' => '4.2'
         ]);
 
         Posts::create([
         'title' => 'Les Murmures de la Forêt',
-        'content' => 'Dans un petit village, les habitants entendent des voix mystérieuses venant de la forêt environnante, et un jeune garçon décide de découvrir leur origine.', 
-        'author' => 'Hugo Marchal', 
-        'value' => '3.9'   
+        'content' => 'Dans un petit village, les habitants entendent des voix mystérieuses venant de la forêt environnante, et un jeune garçon décide de découvrir leur origine.',
+        'author' => 'Hugo Marchal',
+        'value' => '3.9'
         ]);
 
-        
+
     }
 
     public function addCommentsToPosts() {
@@ -111,17 +117,17 @@ public function createNewPost() {
     public function store(PostsRequest $request)
     {
         $validatedData = $request->validated();
-    
+
         // Création du post avec la méthode create() et Mass Assignment
         Posts::create($validatedData);
-    
+
         // Redirection après création avec un message de succès
         return redirect()->route('postList')->with('success', 'Post créé avec succès!');
     }
 
 
 
-    // -------------- EDITION -------------------------- // 
+    // -------------- EDITION -------------------------- //
 
     public function edit(Posts $post) {
         return view('posts.edit', compact('post'));
@@ -132,11 +138,11 @@ public function createNewPost() {
         return view('posts.edit', compact('post'));
    }
 
- 
+
     // UPDATE - 1ere méthode avec le post récupéré
-    
+
     // public function update(PostsRequest $request, Posts $post)  {
-        
+
     //     $validatedData = $request->validated();
 
     //     $post->title = $validatedData['title'];
@@ -148,7 +154,7 @@ public function createNewPost() {
     // // $post->update($validatedData);
 
     //     return redirect()->route('postList')->with('success', 'Post mis à jour avec succès!');
-    
+
     // }
 
     public function update(PostsRequest $request, $id) {
@@ -192,7 +198,7 @@ public function createNewPost() {
 public function storeWithoutFormRequests(Request $request) {
 
     // Ne pas oublier d'ajouter dans les déclarations tout en haut du fichier : use Illuminate\Support\Facades\Validator;
-    $validator = Validator::make($request->all(), [ 
+    $validator = Validator::make($request->all(), [
         'title' => 'required|string|max:255',
         'value' => 'required|numeric|min:0|max:5',
     ]);
@@ -200,7 +206,7 @@ public function storeWithoutFormRequests(Request $request) {
     // Le hook before pour manipuler les données avant validation
     $validator->after(function ($validator) use ($request) {
         $request->merge([
-            'title' => ucfirst($request->title),  // Exemple : Mettre la première lettre du titre en majuscule 
+            'title' => ucfirst($request->title),  // Exemple : Mettre la première lettre du titre en majuscule
         ]);
     });
 
@@ -210,7 +216,7 @@ public function storeWithoutFormRequests(Request $request) {
         ->withErrors($validator)  // Ajoute les erreurs à la session
         ->withInput();  // Conserve les anciennes données du formulaire
     }
-  } 
+  }
 
 
   // ---------------- COMPARAISON ELOQUENT / QUERY BUILDER ----------------//
@@ -219,30 +225,30 @@ public function storeWithoutFormRequests(Request $request) {
   /*  POUR DECLARER LE QUERY BUILDER => use Illuminate\Support\Facades\DB; en haut de votre fichier */
 
   /* REQUETES AVANCES (ELOQUENT) */
-  
+
 
    // ---- AGGREGATIONS (computer sur un ensemble de valeurs) ---- //
    // EXEMPLES : SELECT COUNT(*) FROM..., SELECT MIN(*) FROM..., MAX(*) en SQL
    public function makeAggregation() {
-    
+
     $postsByAuthor = Posts::select('author', DB::raw('COUNT(*) as total_posts')) // L'aggrégat se fait avec la fonction COUNT(*)
     ->groupBy('author')
     ->get();
-    
+
     return $postsByAuthor;
   }
 
    // ---- EXEMPLE DE SOUS-REQUETE ---- //
   // Obtenir le nombre de records liés à l'objet principal (donc les commentaires associés au post)
-  public function getPostWithComments() { 
+  public function getPostWithComments() {
 
     $posts = Posts::withCount('comments')->get();
 
     foreach ($posts as $post) {
-        echo $post->title . ' a ' . $post->comments_count . ' commentaires.'; 
+        echo $post->title . ' a ' . $post->comments_count . ' commentaires.';
     }
 
-    // withCount('comments') ajoute un attribut 'comments_count' à chaque posts... qui représente le nombre de commentaires associés au post. 
+    // withCount('comments') ajoute un attribut 'comments_count' à chaque posts... qui représente le nombre de commentaires associés au post.
     // Equivaut à une sous-requête pour compter les commentaires.
 
     return $posts;
@@ -266,7 +272,7 @@ public function storeWithoutFormRequests(Request $request) {
 
   /* REQUETES AVANCES (QUERY BUILDER) */
 
-  // SOUS-REQUETE 
+  // SOUS-REQUETE
   public function makePostsSubRequest() {
 
     $posts = DB::table('posts')
@@ -277,7 +283,7 @@ public function storeWithoutFormRequests(Request $request) {
     return $posts;
   }
 
-  // REQUETE AVEC PLUSIEURS JOINTURES 
+  // REQUETE AVEC PLUSIEURS JOINTURES
   public function makeComplexRequestWithPosts() {
 
     $posts = DB::table('posts')
@@ -294,11 +300,11 @@ public function storeWithoutFormRequests(Request $request) {
   // REQUETE AVEC PLUSIEURS CONDITIONS
   public function makeConditionnalRequest() {
 
-    $author = 'John Doe'; 
+    $author = 'John Doe';
     $minValue = 4.0;
 
         $posts = DB::table('posts')
-            ->when($author, function ($query, $author) { 
+            ->when($author, function ($query, $author) {
                 // utilisation des fonctions anonymes (closure) en guise de callback... qui peux se combiner avec une autre condition
                 return $query->where('author', $author);
             })
@@ -306,7 +312,7 @@ public function storeWithoutFormRequests(Request $request) {
                 return $query->where('value', '>=', 3);
             })
             ->get();
-            
+
     return $posts;
   }
 
@@ -360,4 +366,3 @@ public function storeWithoutFormRequests(Request $request) {
   }
 
 }
- 
