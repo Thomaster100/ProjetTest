@@ -10,46 +10,44 @@
 <body>
 
     <div class="container">
-    {{-- Boucle templating blade  --}}
-    @foreach($postList as $post)
-        <div class="row">
-            <div class="col-md-8 m-1 p-1 post-container">
-                <p class="h2">{{ $post->title }}</p>
-                <p>{{ $post->content }}</p>
-                <p>{{ $post->author }}</p>
-                <p>{{ $post->value }}</p>
-
-                {{-- Mauvaise pratique --}}
-                {{-- 
-                <a href="/posts/{{ $post->id }}/edit">Modifier</a>
-                <form method="POST" action="/posts/{{ $post->id }}"> 
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit">Supprimer</button>
-                </form>
-                --}}
-
-                {{-- Bonne pratique --}}
-                <a class="btn btn-secondary" href="{{ route('posts.edit', $post) }}">Modifier</a>
-                <form method="POST" action="{{ route('posts.destroy', $post) }}">
-                    @csrf
-                    @method('DELETE')
-                    <button class="btn btn-primary" type="submit" onclick="return confirm('Voulez-vous vraiment supprimer ce post ?');">Supprimer</button>
-                </form>
-
-                {{-- Bonne pratique avec l'ID --}}
-                {{-- <a href="{{ route('posts.edit.byId', $post->id) }}">Modifier</a>
-                <form method="POST" action="{{ route('posts.destroy.byId', $post->id) }}">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" onclick="return confirm('Voulez-vous vraiment supprimer ce post ?');">Supprimer</button>
-                </form> --}}
-
+        <h1>Liste des Posts</h1>
+    
+        @foreach($postList as $post)
+            <div class="row mb-3">
+                <div class="col-md-8 m-1 p-1 post-container card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ $post->title }}</h5>
+                        <p class="card-text">{{ $post->content }}</p>
+                        <p class="card-text">Auteur : {{ $post->author }}</p>
+                        <p class="card-text">Valeur : {{ $post->value }}</p>
+    
+                        <div class="d-flex justify-content-end">
+                            <!-- Bouton Modifier -->
+                            <a href="{{ route('posts.edit', $post) }}" class="btn btn-secondary me-2"
+                                @if(auth()->user()->role->name !== 'admin' || !auth()->user()->hasPermission('modify-todos'))
+                                    style="pointer-events: none; opacity: 0.5;"
+                                @endif
+                            >Modifier</a>
+    
+                            <!-- Bouton Supprimer -->
+                            <form method="POST" action="{{ route('posts.destroy', $post) }}">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-primary"
+                                    type="submit"
+                                    @if(auth()->user()->role->name !== 'admin' || !auth()->user()->hasPermission('modify-todos'))
+                                        disabled
+                                    @endif
+                                    onclick="return confirm('Voulez-vous vraiment supprimer ce post ?');"
+                                >Supprimer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    @endforeach
+        @endforeach
     </div>
-
+  
 
     <form action="{{ route('logout') }}" method="POST" style="display: inline;">
         @csrf

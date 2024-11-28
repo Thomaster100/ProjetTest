@@ -8,28 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller {
-    
-    public function register(Request $request) {
-
-    $request->validate([
-        'name' => 'required|string|min:5|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:8|confirmed',
-    ]);
-
-    $user = User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => bcrypt($request->password),
-    ]);
-
-    Auth::login($user);
-    // auth()->login(); pour le middleware web
-    
-    redirect('/login');
-    return Session::flash('test', 'testOK');
-
-  }
 
   public function login(Request $request) {
 

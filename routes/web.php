@@ -26,6 +26,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // ROUTE TEMPORAIRE D'AJOUT DE DONNEES "BRUT" - sans formulaire (Voir controlleur)
 Route::get('/addPostList', [PostsController::class, 'create'])->name('addPostList');
 
+// ROUTE TEMPORAIRE D'AJOUT D'UTILISATEURS, ROLES ET PERMISSIONS
+Route::get('/addUsers', [UserController::class, 'run'])->name('addUsers');
+
 // LISTER LES POSTES
 Route::get('/postList', [PostsController::class, 'index'])->name('postList');
 
@@ -110,3 +113,9 @@ Route::prefix('posts/{postId}/comments')->as('comments.')->group(function () {
 // Version avec ressources (crée toutes les routes CRUD automatiquement)
 
 Route::resource('posts.comments', CommentController::class);
+
+// ROUTE AVEC MIDDLEWARE POUR LES PERMISSIONS
+Route::middleware(['permission:modify-todos'])->group(function () {
+    Route::put('/todos/{todo}', [PostsController::class, 'update']);
+    Route::delete('/todos/{todo}', [PostsController::class, 'destroy']);
+});
