@@ -3,11 +3,19 @@
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 
 // ROUTE DE BASE DE LARAVEL
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+// ROUTES INSCRIPTION UTILISATEUR
+Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+Route::post('/users', [UserController::class, 'store'])->name('users.store');
+
 
 // ROUTE TEMPORAIRE D'AJOUT DE DONNEES "BRUT" - sans formulaire (Voir controlleur)
 Route::get('/addPostList', [PostsController::class, 'create'])->name('addPostList');
@@ -96,3 +104,12 @@ Route::prefix('posts/{postId}/comments')->as('comments.')->group(function () {
 // Version avec ressources (crée toutes les routes CRUD automatiquement)
 
 Route::resource('posts.comments', CommentController::class);
+
+
+// Routes pour l'authentification
+
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login'); 
+
+Route::post('/login', [AuthController::class, 'login']); 
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout'); 
