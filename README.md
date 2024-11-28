@@ -102,3 +102,9 @@ exemple :
 
 -> Ensuite ajouter les imports bootstrap pour le JS (si pas automatiquement ajouté par la commande npm) => `import './bootstrap'` 
 -> idem pour le CSS - a ajouter (`@import "bootstrap/dist/css/bootstrap.min.css";` )
+
+----------------------------------------------------------------
+
+Ajout de la debugbar
+
+`composer require barryvdh/laravel-debugbar --dev`
