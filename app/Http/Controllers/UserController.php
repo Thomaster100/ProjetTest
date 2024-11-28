@@ -29,7 +29,7 @@ class UserController extends Controller
     public function store(Request $request) {
 
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|min:5|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required|in:user,admin',

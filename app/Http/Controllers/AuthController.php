@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Models\User;   
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller {
     
     public function register(Request $request) {
 
     $request->validate([
-        'name' => 'required|string|max:255',
+        'name' => 'required|string|min:5|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8|confirmed',
     ]);
@@ -23,8 +24,10 @@ class AuthController extends Controller {
     ]);
 
     Auth::login($user);
-
-    return redirect('/login');
+    // auth()->login(); pour le middleware web
+    
+    redirect('/login');
+    return Session::flash('test', 'testOK');
 
   }
 
@@ -53,6 +56,7 @@ class AuthController extends Controller {
   public function logout(Request $request) {
     
     Auth::logout();
+    // auth()->logout(); avec le middleware web
     $request->session()->invalidate();
     $request->session()->regenerateToken();
 

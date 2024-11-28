@@ -22,7 +22,7 @@
                 {{-- Mauvaise pratique --}}
                 {{-- 
                 <a href="/posts/{{ $post->id }}/edit">Modifier</a>
-                <form method="POST" action="/posts/{{ $post->id }}">
+                <form method="POST" action="/posts/{{ $post->id }}"> 
                     @csrf
                     @method('DELETE')
                     <button type="submit">Supprimer</button>
