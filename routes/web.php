@@ -119,3 +119,6 @@ Route::middleware(['permission:modify-todos'])->group(function () {
     Route::put('/todos/{todo}', [PostsController::class, 'update']);
     Route::delete('/todos/{todo}', [PostsController::class, 'destroy']);
 });
+
+// ROUTE DE RECHERCHE DE POSTS
+Route::get('/search', [PostsController::class, 'search'])->name('posts.search');

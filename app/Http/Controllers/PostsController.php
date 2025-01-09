@@ -364,4 +364,18 @@ public function storeWithoutFormRequests(Request $request) {
     return $posts;
   }
 
+  // RECHERCHE AJAX DES POSTS
+  public function search(Request $request) {
+
+        $query = $request->input('query');
+
+        $postList = Posts::where('title', 'LIKE', "%{$query}%")
+        ->orWhere('author', 'LIKE', "%{$query}%")
+        ->get();
+
+        return response()->json([
+            'html' => view('posts.partials.results', compact('postList'))->render(),
+        ]);
+    }
+
 }
