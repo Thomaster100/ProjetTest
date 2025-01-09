@@ -8,9 +8,17 @@ use App\Models\Posts;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Services\PostsService;
 
 
 class PostsController extends Controller {
+
+    protected $postsService;
+
+    // Import du service
+    public function __construct(PostsService $postsService) {
+        $this->postsService = $postsService; 
+    }
 
     // LISTER TOUT LES POSTS
     public function index() {
@@ -118,7 +126,10 @@ public function createNewPost() {
         $validatedData = $request->validated();
 
         // Création du post avec la méthode create() et Mass Assignment
-        Posts::create($validatedData);
+        // Posts::create($validatedData);
+
+        // Faire appel au service
+        $post = $this->postsService->createPost($validatedData);
 
         // Redirection après création avec un message de succès
         return redirect()->route('postList')->with('success', 'Post créé avec succès!');
@@ -139,38 +150,32 @@ public function createNewPost() {
 
 
     // UPDATE - 1ere méthode avec le post récupéré
+    public function update(PostsRequest $request, Posts $post)  {
 
-    // public function update(PostsRequest $request, Posts $post)  {
+        $validatedData = $request->validated();
+
+        // Appel au service
+        $this->postsService->updatePost($post, $validatedData);
+
+        return redirect()->route('postList')->with('success', 'Post mis à jour avec succès!');
+
+    }
+
+    // public function update(PostsRequest $request, $id) {
 
     //     $validatedData = $request->validated();
+    //     $post = Posts::findOrFail($id);
 
     //     $post->title = $validatedData['title'];
     //     $post->content = $validatedData['content'];
     //     $post->author = $validatedData['author'];
     //     $post->value = $validatedData['value'];
-    //     $post->save();
 
-    // // $post->update($validatedData);
+    //     // OU $post->update($validatedData);
+    //     // $post->save();
 
     //     return redirect()->route('postList')->with('success', 'Post mis à jour avec succès!');
-
     // }
-
-    public function update(PostsRequest $request, $id) {
-
-        $validatedData = $request->validated();
-        $post = Posts::findOrFail($id);
-
-        $post->title = $validatedData['title'];
-        $post->content = $validatedData['content'];
-        $post->author = $validatedData['author'];
-        $post->value = $validatedData['value'];
-
-        // OU $post->update($validatedData);
-
-        $post->save();
-        return redirect()->route('postList')->with('success', 'Post mis à jour avec succès!');
-    }
 
     // DESTROY
 

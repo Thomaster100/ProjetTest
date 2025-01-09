@@ -42,7 +42,11 @@ Route::post('/storePost' , [PostsController::class, 'store'])->name('storePost')
 
 // Afficher le formulaire d'édition
 
+// AJOUT MIDDLEWARE POUR VERIFIER LES MOTS
+
 Route::get('/posts/{post}/edit', [PostsController::class, 'edit'])->name('posts.edit');
+
+Route::put('/posts/{post}', [PostsController::class, 'update'])->name('posts.update')->middleware('checkPostKeyword');
 
 Route::get('/posts/{id}/edit', [PostsController::class, 'editById'])->name('posts.edit.byId');
 
@@ -51,7 +55,7 @@ Route::get('/posts/{id}/edit', [PostsController::class, 'editById'])->name('post
 
 // ROUTE MODEL BINDING -  Fait correspondre l'ID fourni dans l'URL à une instance du modèle Post
 
-Route::put('/posts/{post}', [PostsController::class, 'update'])->name('posts.update');
+// Route::put('/posts/{post}', [PostsController::class, 'update'])->name('posts.update');
 
 // Route avec le "getPostsByID"
 Route::put('/posts/{id}', [PostsController::class, 'update'])->name('posts.update.byId');
