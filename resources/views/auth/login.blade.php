@@ -19,7 +19,7 @@
     @endif
 
     <div class="container mt-5">
-        <h1>Connexion</h1>
+        <p class="h1 mb-5 text-center">Postlist - Connexion</p>
         <form action="{{ url('/login') }}" method="POST">
             @csrf
             <div class="mb-3">
@@ -32,6 +32,12 @@
             </div>
             <button type="submit" class="btn btn-primary">Se connecter</button>
         </form>
+    </div>
+        <div class="position-fixed bottom-0 end-0 m-4">
+            <a href="{{ route('users.create') }}" class="btn btn-primary btn-lg" title="Ajouter un compte utilisateur">
+                + Ajouter un utilisateur
+            </a>
+        </div>
     </div>
 </body>
 </html>

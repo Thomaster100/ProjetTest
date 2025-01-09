@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,50 +9,41 @@
 </head>
 <body>
 
-    <div class="container">
-        <h1>Liste des Posts</h1>
-    
-        @foreach($postList as $post)
-            <div class="row mb-3">
-                <div class="col-md-8 m-1 p-1 post-container card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ $post->title }}</h5>
-                        <p class="card-text">{{ $post->content }}</p>
-                        <p class="card-text">Auteur : {{ $post->author }}</p>
-                        <p class="card-text">Valeur : {{ $post->value }}</p>
-    
-                        <div class="d-flex justify-content-end">
-                            <!-- Bouton Modifier -->
-                            <a href="{{ route('posts.edit', $post) }}" class="btn btn-secondary me-2"
-                                @if(auth()->user()->role->name !== 'admin' || !auth()->user()->hasPermission('modify-todos'))
-                                    style="pointer-events: none; opacity: 0.5;"
-                                @endif
-                            >Modifier</a>
-    
-                            <!-- Bouton Supprimer -->
-                            <form method="POST" action="{{ route('posts.destroy', $post) }}">
-                                @csrf
-                                @method('DELETE')
-                                <button class="btn btn-primary"
-                                    type="submit"
-                                    @if(auth()->user()->role->name !== 'admin' || !auth()->user()->hasPermission('modify-todos'))
-                                        disabled
-                                    @endif
-                                    onclick="return confirm('Voulez-vous vraiment supprimer ce post ?');"
-                                >Supprimer</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-    </div>
-  
+    <div class="container 
+                d-flex 
+                flex-column 
+                justify-content-center 
+                align-items-center">
+        <p class="h1 text-center my-3">Liste des Posts</p>
 
-    <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-        @csrf
-        <button type="submit" class="btn btn-danger">Déconnexion</button>
-    </form>
+ <!-- searchBar -->
+ <div class="container my-4">
+    <div class="row">
+        <div class="col-12">
+            <input 
+            type="text" 
+            id="search-bar" 
+            class="form-control" 
+            placeholder="Rechercher par titre ou auteur...">
+        </div>
+    </div>
+ </div>
+
+    @include('posts.partials.results')
+    
+</div>
+  
+<div class="container d-flex justify-content-end p-5">
+    <div class="row">
+        <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+            @csrf
+            <button type="submit" class="btn btn-danger">Déconnexion</button>
+        </form>
+    </div>
+</div>
+
+<!-- Import JS de la searchBar -->
+@vite(['resources/js/searchBar.js'])
 
 </body>
 </html>
