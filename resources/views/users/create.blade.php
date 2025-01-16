@@ -39,8 +39,8 @@
             </div>
 
             <div class="mb-3">
-                <label for="role" class="form-label">Rôle</label>
-                <select id="role" name="role" class="form-select" required>
+                <label for="role_id" class="form-label">Rôle</label>
+                <select id="role_id" name="role_id" class="form-select" required>
                     <option value="user" {{ old('role') === 'user' ? 'selected' : '' }}>Utilisateur</option>
                     <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Administrateur</option>
                 </select>

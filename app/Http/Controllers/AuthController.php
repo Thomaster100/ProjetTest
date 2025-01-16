@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\User;   
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Events\Verified;
 
 class AuthController extends Controller {
 
@@ -16,11 +17,21 @@ class AuthController extends Controller {
         'password' => 'required',
     ]);
 
-    if (Auth::attempt($credentials)) {
-        $request->session()->regenerate();
+    // Récupération utilisateur
+    $user = User::where('email', $request->email)->first();
 
-        return redirect('/postList');
-    }
+    // Vérification email
+    if ($user && $user->hasVerifiedEmail()) { 
+
+        if (Auth::attempt($credentials)) {
+          $request->session()->regenerate();
+          return redirect('/postList');
+      }
+
+      return redirect()->route('login')->with('error', 'Votre email a déja été vérifié.');
+   }
+   
+
 
     return back()->withErrors([
         'email' => 'Les identifiants fournis sont incorrects.',

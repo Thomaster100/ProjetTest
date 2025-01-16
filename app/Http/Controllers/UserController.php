@@ -8,6 +8,9 @@ use App\Models\Role;
 use App\Models\Permission;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -36,18 +39,23 @@ class UserController extends Controller
             'name' => 'required|string|min:5|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:8',
-            'role' => 'required|in:user,admin',
+            'role_id' => 'required|in:user,admin',
         ]);
+
+        // retrouver le role dans la table (pour l'ID)
+        $role = Role::where('name', $request->role_id)->first();
     
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
-            'role' => $request->role,
+            'role_id' => $role->id, // ajouter l'ID du role
         ]);
+
+        // Evenement registred -> 
+        event(new Registered($user)); 
         
-        Session::flash('test', 'testOK');
-        return redirect()->route('postList')->with('success', 'Utilisateur ajouté avec succès.');
+        return redirect()->route('users.create')->with('success', 'Un email de vérification vous a été envoyé.');
     }
 
     /**

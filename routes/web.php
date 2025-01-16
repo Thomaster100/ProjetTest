@@ -5,6 +5,8 @@ use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\EmailVerificationController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest; // A ajouter
 
 // ROUTE DE BASE DE LARAVEL
 Route::get('/', function () {
@@ -122,3 +124,7 @@ Route::middleware(['permission:modify-todos'])->group(function () {
 
 // ROUTE DE RECHERCHE DE POSTS
 Route::get('/search', [PostsController::class, 'search'])->name('posts.search');
+
+// ROUTES DE VERIFICATION EMAIL
+Route::get('/verify-email/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
+Route::get('/email/verified', [EmailVerificationController::class, 'verified'])->name('email.verified');
