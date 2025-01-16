@@ -27,12 +27,10 @@ class AuthController extends Controller {
           $request->session()->regenerate();
           return redirect('/postList');
       }
-
-      return redirect()->route('login')->with('error', 'Votre email a déja été vérifié.');
+   } else {
+      return redirect()->route('login')->with('error', 'Votre email n\'a pas été vérifié.');
    }
    
-
-
     return back()->withErrors([
         'email' => 'Les identifiants fournis sont incorrects.',
     ]);

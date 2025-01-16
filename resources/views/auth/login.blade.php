@@ -39,5 +39,13 @@
             </a>
         </div>
     </div>
+
+    @if (session('error'))
+    <div class="alert alert-warning">
+        {{ session('error') }}
+    </div>
+   @endif
+
+
 </body>
 </html>
