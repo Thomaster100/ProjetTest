@@ -46,7 +46,7 @@ class UserController extends Controller
             'password' => bcrypt(Str::random(8)), // mot de passe temporaire ! 
         ]);
 
-        // Evenement registred 
+        // Evenement registred
         event(new Registered($user)); 
         
         return redirect()->route('users.create')->with('success', 'Un email de vérification vous a été envoyé.');

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Auth\Events\Verified;
+use Illuminate\Auth\Events\Verified; // ne pas oublier l'import de Verified
 use Illuminate\Support\Facades\Auth;
 
 
