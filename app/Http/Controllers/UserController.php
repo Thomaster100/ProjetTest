@@ -37,25 +37,50 @@ class UserController extends Controller
 
         $request->validate([
             'name' => 'required|string|min:5|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8',
-            'role_id' => 'required|in:user,admin',
+            'email' => 'required|email|unique:users'
         ]);
-
-        // retrouver le role dans la table (pour l'ID)
-        $role = Role::where('name', $request->role_id)->first();
     
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($request->password),
-            'role_id' => $role->id, // ajouter l'ID du role
+            'password' => bcrypt(Str::random(8)), // mot de passe temporaire ! 
         ]);
 
-        // Evenement registred -> 
+        // Evenement registred 
         event(new Registered($user)); 
         
         return redirect()->route('users.create')->with('success', 'Un email de vérification vous a été envoyé.');
+    }
+
+
+    public function finishRegistrationView($id) {
+        $user = User::findOrFail($id);
+        return view('users.finish-creation', ['id' => $user->id]);
+    }
+
+    public function completeUser(Request $request, $id) {
+
+        $user = User::findOrFail($id);
+        if($request->password !== $request->confirmPassword) {
+            return redirect()->route('finish-register', ['id' => $user->id])->with('error', 'Les mots de passe ne correspondent pas');
+        }
+
+        $request->validate([
+            'password' => 'required|string|min:8',
+            'role_id' => 'required|in:user,admin',
+        ]);
+
+
+        // Retrouver le role dans la table (pour l'ID)
+        $role = Role::where('name', $request->role_id)->first();
+
+        $user->update([
+            'password' =>  bcrypt($request->input('password')),
+            'role_id' => $role->id
+
+        ]);
+
+        return redirect()->route('login')->with('success', 'Utilisateur finalisé');
     }
 
     /**

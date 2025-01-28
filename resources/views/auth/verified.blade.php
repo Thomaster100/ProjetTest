@@ -8,10 +8,11 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
-    <div class="container">
+    <div class="container mt-5 mx-auto">
         <h1>Email Vérifié</h1>
-        <p>Votre email a été vérifié avec succès</p>
-        <a href="/users/create" class="btn btn-success">Completer mes infos</a>
+        <p>Votre email a été vérifié avec succès.</p>
+        <a href="{{ route('finish-register', $id) }}" class="btn btn-primary">Completer mes infos</a>
+        
     </div>
     
 </body>

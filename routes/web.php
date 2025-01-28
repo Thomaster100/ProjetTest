@@ -127,4 +127,8 @@ Route::get('/search', [PostsController::class, 'search'])->name('posts.search');
 
 // ROUTES DE VERIFICATION EMAIL
 Route::get('/verify-email/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
-Route::get('/email/verified', [EmailVerificationController::class, 'verified'])->name('email.verified');
+Route::get('/email/verified/{id}', [EmailVerificationController::class, 'verified'])->name('email.verified');
+
+// ROUTES DE FINALISATION UTILISATEUR
+Route::get('/finish-register/{id}', [UserController::class, 'finishRegistrationView'])->name('finish-register');
+Route::post('/complete-user/{id}', [UserController::class, 'completeUser'])->name('user.complete');

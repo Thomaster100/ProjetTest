@@ -24,10 +24,10 @@ class EmailVerificationController extends Controller
             return redirect()->route('login')->with('error', 'Votre email a déja été vérifié.');
         }
  
-        return redirect()->route('email.verified')->with('success', 'Votre email a été vérifié.');
+        return $this->verified($id);
     }
 
-    public function verified() {
-        return view('auth.verified');
+    public function verified($id) {
+        return view('auth.verified', compact('id'));
     }
 }
