@@ -130,3 +130,11 @@ Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm']
 Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
 Route::get('/reset-password/{token}/{email}', [AuthController::class, 'showResetPasswordForm'])->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
+
+// ROUTES DE VERIFICATION EMAIL
+Route::get('/verify-email/{id}/{hash}', [EmailVerificationController::class, 'verify'])->name('verification.verify');
+Route::get('/email/verified/{id}', [EmailVerificationController::class, 'verified'])->name('email.verified');
+
+// ROUTES DE FINALISATION UTILISATEUR
+Route::get('/finish-register/{id}', [UserController::class, 'finishRegistrationView'])->name('finish-register');
+Route::post('/complete-user/{id}', [UserController::class, 'completeUser'])->name('user.complete');
