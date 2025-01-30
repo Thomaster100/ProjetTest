@@ -8,7 +8,7 @@ use App\Http\Controllers\UserController;
 
 // ROUTE DE BASE DE LARAVEL
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 
@@ -122,3 +122,11 @@ Route::middleware(['permission:modify-todos'])->group(function () {
 
 // ROUTE DE RECHERCHE DE POSTS
 Route::get('/search', [PostsController::class, 'search'])->name('posts.search');
+
+// Mot de passe oublié
+Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.request');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+
+Route::get('/reset-password/{token}/{email}', [AuthController::class, 'showResetPasswordForm'])->name('password.reset');
+
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');

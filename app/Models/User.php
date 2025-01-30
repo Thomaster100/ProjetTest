@@ -1,11 +1,10 @@
 <?php
-
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Notifications\ResetPassword; // A ajouter pour importer l'evenement ResetPassword
 
 
 class User extends Authenticatable {
@@ -47,6 +46,11 @@ class User extends Authenticatable {
     // VERIFIER SI ROLE ADMIN (CAS RELATION)
     public function isAdmin() {
         return $this->role && $this->role === 'admin';
+   }
+
+//    // Ne pas oublier d'associer la notification avec l'utilisateur
+   public function sendPasswordResetNotification($token) {
+       $this->notify(new ResetPassword($token));
    }
 
 }

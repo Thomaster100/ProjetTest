@@ -32,6 +32,9 @@
             </div>
             <button type="submit" class="btn btn-primary">Se connecter</button>
         </form>
+        <div class="mt-4">
+            <a href="{{ route('password.request') }}" class="btn btn-primary">Mot de passe oublié ?</a>
+        </div>
     </div>
         <div class="position-fixed bottom-0 end-0 m-4">
             <a href="{{ route('users.create') }}" class="btn btn-primary btn-lg" title="Ajouter un compte utilisateur">
