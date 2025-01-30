@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Password; // A ajouter !! 
 use Illuminate\Support\Str; // A ajouter si besoin d'une classe String
 use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\Auth;
+
 
 class AuthController extends Controller {
 
