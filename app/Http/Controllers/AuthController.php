@@ -6,8 +6,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Password; // A ajouter !! 
+use Illuminate\Auth\Events\PasswordReset; // A ajouter !! 
 use Illuminate\Support\Str; // A ajouter si besoin d'une classe String
-use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -58,6 +58,7 @@ class AuthController extends Controller {
     }
 
     public function sendResetLink(Request $request) {
+
         $request->validate(['email' => 'required|email|exists:users,email']);
 
         $status = Password::sendResetLink($request->only('email'));
@@ -81,7 +82,7 @@ class AuthController extends Controller {
 
         /*
          Qu'est ce que la classe Password ? *
-         Classe qui gère la réinitialisation des mot de passe
+         Classe qui gère la réinitialisation des mots de passe
         */
 
         $status = Password::reset(
