@@ -130,3 +130,13 @@ Utils
 `php artisan cache:clear `
 `php artisan config:clear`
 
+----------------------------------------------------------------
+
+Doc Laravel 11 - tips
+
+Pour rechercher rapidement une classe : https://laravel.com/api/11.x/(votre biliotheque).html
+
+Exemples : 
+
+- https://laravel.com/api/11.x/Illuminate\Support\Facades\Password.html
+- https://laravel.com/api/11.x/Illuminate\Auth\Events\PasswordReset.html
