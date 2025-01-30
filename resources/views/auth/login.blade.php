@@ -8,6 +8,12 @@
 </head>
 <body>
 
+        @if (session('success'))
+            <div class="alert alert-success mt-4">
+                {{ session('success') }}
+            </div>
+        @endif
+
         @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
@@ -42,5 +48,6 @@
             </a>
         </div>
     </div>
+
 </body>
 </html>

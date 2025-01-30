@@ -6,8 +6,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Notifications\ResetPassword; // A ajouter pour importer l'evenement ResetPassword
 
-
-class User extends Authenticatable {
+class User extends Authenticatable /* (A ajouter ->)*/ implements MustVerifyEmail   {
 
     use HasFactory, Notifiable;
 

@@ -5,6 +5,8 @@ use App\Http\Controllers\CommentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\EmailVerificationController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest; // A ajouter
 
 // ROUTE DE BASE DE LARAVEL
 Route::get('/', function () {
