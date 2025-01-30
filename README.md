@@ -108,3 +108,25 @@ exemple :
 Ajout de la debugbar
 
 `composer require barryvdh/laravel-debugbar --dev`
+
+
+----------------------------------------------------------------
+
+Notifications
+
+generer une notification de reset password 
+`php artisan make:notification ResetPassword`
+
+Generer la notification (contenu email)
+`php artisan vendor:publish --tag=laravel-notifications`
+
+
+----------------------------------------------------------------
+
+Utils 
+
+// Regenerer les fichiers et vider le cache
+`composer dump-autoload `
+`php artisan cache:clear `
+`php artisan config:clear`
+
