@@ -53,18 +53,17 @@
             fetch(`/map/search?query=${encodeURIComponent(query)}`)
                 .then(response => response.json())
                 .then(data => {
-                    
-                    if (!data.features || data.features.length === 0) {
+                    if (!data.longitude || !data.latitude) {
                         alert("Adresse introuvable.");
                         return;
                     }
 
-                    var coords = data.features[0].geometry.coordinates;
+                    var coords = [data.longitude, data.latitude];
                     map.flyTo({ center: coords, zoom: 14 });
 
                     new mapboxgl.Marker()
                         .setLngLat(coords)
-                        .setPopup(new mapboxgl.Popup().setText(data.features[0].place_name))
+                        .setPopup(new mapboxgl.Popup().setText(data.full_address))
                         .addTo(map);
                 })
                 .catch(error => console.error("Erreur de recherche :", error));

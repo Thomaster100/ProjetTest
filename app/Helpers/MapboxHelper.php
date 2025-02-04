@@ -19,14 +19,15 @@ class MapboxHelper {
         }
 
         $data = $response->json();
-        // if (!isset($data['features'][0])) {
-        //     return null;
-        // }
+        if (!isset($data['features'][0])) {
+            return null;
+        }
 
         return [
             'longitude' => $data['features'][0]['geometry']['coordinates'][0],
             'latitude' => $data['features'][0]['geometry']['coordinates'][1],
             'full_address' => $data['features'][0]['place_name'],
         ];
+        
     }
 }

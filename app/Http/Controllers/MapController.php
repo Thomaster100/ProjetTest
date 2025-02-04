@@ -46,7 +46,8 @@ class MapController extends Controller
 
     public function showMultipleMarkers()
     {
-        return view('mapbox.mapMultipleMarkers');
+        $markers = $this->getMarkers();
+        return view('mapbox.mapMultipleMarkers', compact('markers'));
     }
 
     // Envoi des coordonnées markers en JSON
