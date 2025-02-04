@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "koossaayy/laravel-mapbox": "^0.4.8",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9"
     },
@@ -23,7 +24,10 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
-        }
+        },
+        "files": [
+            "app/Helpers/MapboxHelper.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

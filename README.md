@@ -140,3 +140,24 @@ Exemples :
 
 - https://laravel.com/api/11.x/Illuminate\Support\Facades\Password.html
 - https://laravel.com/api/11.x/Illuminate\Auth\Events\PasswordReset.html
+
+
+----------------------------------------------------------------
+
+Installer / Utiliser Mapbox
+
+En premier lieu ajouter son token dans le fichier d'environnement : 
+
+`MAPBOX_TOKEN={votre token}`
+
+Installer la bibliothèque : `composer require koossaayy/laravel-mapbox`
+Publier le fichier de configuration : `php artisan vendor:publish --tag=mapbox-config`
+(sera placé dans le dossier config/mapbox)
+
+Effacer le cache : `php artisan config:clear`
+
+Pour le fichier helper (MapboxHelper) ne pas oublier de la charger dans le fichier composer (composer.json)
+
+Pour creer le controller : `php artisan make:controller MapController`
+
+

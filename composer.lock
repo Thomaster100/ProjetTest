@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3585e1ee55eedc669621ab4ec77e5a50",
+    "content-hash": "758db14330c8156d8f7602ed82f332cb",
     "packages": [
         {
             "name": "brick/math",
@@ -1049,6 +1049,84 @@
                 }
             ],
             "time": "2023-12-03T19:50:20+00:00"
+        },
+        {
+            "name": "koossaayy/laravel-mapbox",
+            "version": "v0.4.8",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/koossaayy/laravel-mapbox.git",
+                "reference": "4329be347388326290b28d63b0f009cb0f86fc56"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/koossaayy/laravel-mapbox/zipball/4329be347388326290b28d63b0f009cb0f86fc56",
+                "reference": "4329be347388326290b28d63b0f009cb0f86fc56",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^9.0|^10.0|^11.0",
+                "php": "^8.1|^8.2|^8.3",
+                "spatie/laravel-package-tools": "^1.14"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.4",
+                "nunomaduro/collision": "^7.0|^8.0",
+                "orchestra/testbench": "^8.0|^9.0",
+                "pestphp/pest": "^2.0",
+                "pestphp/pest-plugin-laravel": "^2.0",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan-deprecation-rules": "^1.0",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "phpunit/phpunit": "^10.0",
+                "spatie/laravel-ray": "^1.26"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "LaravelMapbox": "Koossaayy\\LaravelMapbox\\Facades\\LaravelMapbox"
+                    },
+                    "providers": [
+                        "Koossaayy\\LaravelMapbox\\LaravelMapboxServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Koossaayy\\LaravelMapbox\\": "src",
+                    "Koossaayy\\LaravelMapbox\\Database\\Factories\\": "database/factories"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "koossaayy",
+                    "email": "tounessna.2010@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Easily Integration of Mapbox inside your Laravel application",
+            "homepage": "https://github.com/koossaayy/laravel-mapbox",
+            "keywords": [
+                "koossaayy",
+                "laravel",
+                "laravel-mapbox"
+            ],
+            "support": {
+                "issues": "https://github.com/koossaayy/laravel-mapbox/issues",
+                "source": "https://github.com/koossaayy/laravel-mapbox/tree/v0.4.8"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/koossaayy",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-11-14T13:36:54+00:00"
         },
         {
             "name": "laravel/framework",
@@ -3112,6 +3190,66 @@
                 }
             ],
             "time": "2024-04-27T21:32:50+00:00"
+        },
+        {
+            "name": "spatie/laravel-package-tools",
+            "version": "1.18.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-package-tools.git",
+                "reference": "ba67eee37d86ed775dab7dad58a7cbaf9a6cfe78"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-package-tools/zipball/ba67eee37d86ed775dab7dad58a7cbaf9a6cfe78",
+                "reference": "ba67eee37d86ed775dab7dad58a7cbaf9a6cfe78",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^9.28|^10.0|^11.0",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.5",
+                "orchestra/testbench": "^7.7|^8.0|^9.0",
+                "pestphp/pest": "^1.22|^2",
+                "phpunit/phpunit": "^9.5.24|^10.5",
+                "spatie/pest-plugin-test-time": "^1.1|^2.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\LaravelPackageTools\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Tools for creating Laravel packages",
+            "homepage": "https://github.com/spatie/laravel-package-tools",
+            "keywords": [
+                "laravel-package-tools",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/laravel-package-tools/issues",
+                "source": "https://github.com/spatie/laravel-package-tools/tree/1.18.3"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-01-22T08:51:18+00:00"
         },
         {
             "name": "symfony/clock",
