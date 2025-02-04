@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Carte avec Plusieurs Markers - Liège</title>
-    
+
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.1/mapbox-gl.css" rel="stylesheet" />
 
@@ -19,7 +19,8 @@
     <div id="map"></div>
 
     <script>
-        var mapboxToken = "{{ env('MAPBOX_TOKEN') }}"; 
+        //
+        mapboxgl.accessToken = "{{ env('MAPBOX_TOKEN') }}"; 
 
         var map = new mapboxgl.Map({
             container: 'map',
@@ -28,24 +29,21 @@
             zoom: 12
         });
 
-        // Récupérer les markers via fetch
-        function initMarkers() {
-
             fetch("{{ route('map.get_markers') }}")
             .then(response => response.json())
             .then(data => {
                 data.forEach(marker => {
                     new mapboxgl.Marker()
                         .setLngLat([marker.longitude, marker.latitude])
-                        .setPopup(new mapboxgl.Popup().setText(marker.name))
+                        .setPopup(new mapboxgl.Popup().setHTML(
+                        `<strong>${marker.name}</strong><br>
+                        <a href="${marker.link}" target="_blank">Voir plus</a>`
+                    ))
                         .addTo(map);
                 });
-            })
+            })  
             .catch(error => console.error("Erreur lors de la récupération des markers :", error));
 
-        }
-
-        initMarkers();
     </script>
 
 </body>

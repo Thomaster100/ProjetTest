@@ -44,10 +44,8 @@ class MapController extends Controller
         return response()->json($coordinates);
     }
 
-    public function showMultipleMarkers()
-    {
-        $markers = $this->getMarkers();
-        return view('mapbox.mapMultipleMarkers', compact('markers'));
+    public function showMultipleMarkers() {
+        return view('mapbox.mapMultipleMarkers');
     }
 
     // Envoi des coordonnées markers en JSON
@@ -57,22 +55,26 @@ class MapController extends Controller
             [
                 'name' => 'Université de Liège',
                 'longitude' => 5.5718,
-                'latitude' => 50.6372
+                'latitude' => 50.6372,
+                'link' => 'https://www.uliege.be/'
             ],
             [
                 'name' => 'Gare de Liège-Guillemins',
                 'longitude' => 5.574,
-                'latitude' => 50.6241
+                'latitude' => 50.6241,
+                'link' => 'https://www.belgiantrain.be/fr/station-information/NL/LIEGE'
             ],
             [
                 'name' => 'Opéra Royal de Wallonie',
                 'longitude' => 5.5707,
-                'latitude' => 50.6413
+                'latitude' => 50.6413,
+                'link' => 'https://www.operaliege.be/'
             ],
             [
                 'name' => 'Montagne de Bueren',
                 'longitude' => 5.5742,
-                'latitude' => 50.6466
+                'latitude' => 50.6466,
+                'link' => 'https://www.visitezliege.be/fr/montagne-de-bueren'
             ]
         ];
 
