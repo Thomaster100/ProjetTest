@@ -37,7 +37,7 @@
         var map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v11',
-            center: [5.5718, 50.6372], // Coordonnées de Liège
+            center: [5.5718, 50.6372], // Liège
             zoom: 13,
             interactive: true 
         });

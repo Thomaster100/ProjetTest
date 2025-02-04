@@ -39,12 +39,11 @@
     <script>
         mapboxgl.accessToken = "{{ env('MAPBOX_TOKEN') }}";
 
-        let map = new mapboxgl.Map({
+        var map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v11',
-            center: [5.5718, 50.6372], // Paris
-            zoom: 12,
-            interactive: true 
+            center: [5.5718, 50.6372], // Liège
+            zoom: 12
         });
 
         function searchLocation() {
@@ -54,6 +53,7 @@
             fetch(`/map/search?query=${encodeURIComponent(query)}`)
                 .then(response => response.json())
                 .then(data => {
+                    
                     if (!data.features || data.features.length === 0) {
                         alert("Adresse introuvable.");
                         return;
