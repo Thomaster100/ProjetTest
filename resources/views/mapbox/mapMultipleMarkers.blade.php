@@ -16,13 +16,15 @@
 <body>
 
     <h1 style="text-align:center;">Carte avec plusieurs markers à Liège</h1>
-    <div id="map"></div>
+    
+    {{-- intégration de la mapbox avec la syntaxe de Blade --}}
+    <x-mapbox id="map" position="relative" :navigationControls="true"/>
 
     <script>
-        //
+
         mapboxgl.accessToken = "{{ env('MAPBOX_TOKEN') }}"; 
 
-        var map = new mapboxgl.Map({
+        let map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v11',
             center: [5.5718, 50.6372], // Liège
@@ -37,6 +39,7 @@
                         .setLngLat([marker.longitude, marker.latitude])
                         .setPopup(new mapboxgl.Popup().setHTML(
                         `<strong>${marker.name}</strong><br>
+                        <p>Lorem ipsum...</p><br>
                         <a href="${marker.link}" target="_blank">Voir plus</a>`
                     ))
                         .addTo(map);

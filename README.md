@@ -146,6 +146,8 @@ Exemples :
 
 Installer / Utiliser Mapbox
 
+Doc de l'API : https://docs.mapbox.com/mapbox-gl-js/guides/
+
 En premier lieu ajouter son token dans le fichier d'environnement : 
 
 `MAPBOX_TOKEN={votre token}`
@@ -161,3 +163,4 @@ Pour le fichier helper (MapboxHelper) ne pas oublier de la charger dans le fichi
 Pour creer le controller : `php artisan make:controller MapController`
 
 
+----------------------------------------------------------------

@@ -34,12 +34,13 @@
         <button onclick="searchLocation()">Rechercher</button>
     </div>
 
-    <div id="map"></div>
+    {{-- intégration de la mapbox avec la syntaxe de Blade --}}
+    <x-mapbox id="map" position="relative" :navigationControls="true"/>
 
     <script>
         mapboxgl.accessToken = "{{ env('MAPBOX_TOKEN') }}";
 
-        var map = new mapboxgl.Map({
+        let map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v11',
             center: [5.5718, 50.6372], // Liège
@@ -47,7 +48,7 @@
         });
 
         function searchLocation() {
-            var query = document.getElementById('searchInput').value;
+            let query = document.getElementById('searchInput').value;
             if (!query) return alert("Veuillez entrer une adresse.");
 
             fetch(`/map/search?query=${encodeURIComponent(query)}`)
@@ -58,7 +59,7 @@
                         return;
                     }
 
-                    var coords = [data.longitude, data.latitude];
+                    let coords = [data.longitude, data.latitude];
                     map.flyTo({ center: coords, zoom: 14 });
 
                     new mapboxgl.Marker()
