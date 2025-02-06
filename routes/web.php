@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmailVerificationController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest; // A ajouter
 use App\Http\Controllers\MapController;
+use Laravel\Socialite\Facades\Socialite; // A ajouter pour l'authentification externe
 
 // ROUTE DE BASE DE LARAVEL
 Route::get('/', function () {
@@ -24,7 +25,50 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 
 Route::post('/login', [AuthController::class, 'login']); 
 
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout'); 
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// AUTHENTIFICATION EXTERNE
+
+// GOOGLE
+Route::get('/auth/redirect', function () {
+    return Socialite::driver('google')->redirect();
+});
+ 
+Route::get('/auth/callback', function () {
+    $user = Socialite::driver('google')->user();
+    // $user->token
+});
+
+// X (TWITTER)
+Route::get('/auth/redirect', function () {
+    return Socialite::driver('x')->redirect();
+});
+ 
+Route::get('/auth/callback', function () {
+    $user = Socialite::driver('x')->user();
+    // $user->token
+});
+
+// FACEBOOK
+Route::get('/auth/redirect', function () {
+    return Socialite::driver('facebook')->redirect();
+});
+ 
+Route::get('/auth/callback', function () {
+    $user = Socialite::driver('facebook')->user();
+    // $user->token
+});
+
+// LINKEDIN
+Route::get('/auth/redirect', function () {
+    return Socialite::driver('linkedin-openid')->redirect();
+});
+ 
+Route::get('/auth/callback', function () {
+    $user = Socialite::driver('linkedin-openid')->user();
+    // $user->token
+});
+
 
 // ROUTE TEMPORAIRE D'AJOUT DE DONNEES "BRUT" - sans formulaire (Voir controlleur)
 Route::get('/addPostList', [PostsController::class, 'create'])->name('addPostList');
