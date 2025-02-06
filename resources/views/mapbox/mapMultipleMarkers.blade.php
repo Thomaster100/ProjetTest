@@ -16,7 +16,7 @@
 <body>
 
     <h1 style="text-align:center;">Carte avec plusieurs markers à Liège</h1>
-    
+
     {{-- intégration de la mapbox avec la syntaxe de Blade --}}
     <x-mapbox id="map" position="relative" :navigationControls="true"/>
 
@@ -46,7 +46,6 @@
                 });
             })  
             .catch(error => console.error("Erreur lors de la récupération des markers :", error));
-
     </script>
 
 </body>

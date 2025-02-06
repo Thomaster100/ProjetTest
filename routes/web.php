@@ -153,6 +153,9 @@ Route::get('/get-coordinates', [MapController::class, 'getCoordinates'])->name('
 
 // LES MARKERS
 Route::get('/map/multiple-markers', [MapController::class, 'showMultipleMarkers'])->name('map.multiple_markers');
+
 Route::get('/map/get-markers', [MapController::class, 'getMarkers'])->name('map.get_markers');
 
+// Route postman 
+Route::get('/postman-test', [MapController::class, 'printPostmanDatas'])->name('/postman-test');
 

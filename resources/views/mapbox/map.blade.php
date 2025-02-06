@@ -37,6 +37,8 @@
     {{-- intégration de la mapbox avec la syntaxe de Blade --}}
     <x-mapbox id="map" position="relative" :navigationControls="true"/>
 
+    <div id="map"></div>
+
     <script>
         mapboxgl.accessToken = "{{ env('MAPBOX_TOKEN') }}";
 
