@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmailVerificationController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest; // A ajouter
+use App\Http\Controllers\MapController;
 
 // ROUTE DE BASE DE LARAVEL
 Route::get('/', function () {
@@ -138,3 +139,23 @@ Route::get('/email/verified/{id}', [EmailVerificationController::class, 'verifie
 // ROUTES DE FINALISATION UTILISATEUR
 Route::get('/finish-register/{id}', [UserController::class, 'finishRegistrationView'])->name('finish-register');
 Route::post('/complete-user/{id}', [UserController::class, 'completeUser'])->name('user.complete');
+
+// MAPBOX
+
+// AFFICHAGE
+Route::get('/map', [MapController::class, 'index'])->name('map.index');
+
+// RECHERCHE
+Route::get('/map/search', [MapController::class, 'search'])->name('map.search');
+
+// HELPER 
+Route::get('/get-coordinates', [MapController::class, 'getCoordinates'])->name('map.coordinates');
+
+// LES MARKERS
+Route::get('/map/multiple-markers', [MapController::class, 'showMultipleMarkers'])->name('map.multiple_markers');
+
+Route::get('/map/get-markers', [MapController::class, 'getMarkers'])->name('map.get_markers');
+
+// Route postman 
+Route::get('/postman-test', [MapController::class, 'printPostmanDatas'])->name('/postman-test');
+
