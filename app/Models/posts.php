@@ -15,7 +15,8 @@ class Posts extends Model
         'title',
         'content',
         'author',
-        'value'
+        'value',
+        'approved'
     ];
 
     // Cast automatique du champ "value" en float

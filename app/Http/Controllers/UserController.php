@@ -48,6 +48,7 @@ class UserController extends Controller
 
         // Evenement registred
         event(new Registered($user)); 
+        $user->sendEmailVerificationNotification();
         
         return redirect()->route('users.create')->with('success', 'Un email de vérification vous a été envoyé.');
     }

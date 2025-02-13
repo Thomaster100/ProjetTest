@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Http\Middleware;
+
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Response;
 
 class PermissionMiddleware {
     
@@ -10,8 +12,8 @@ class PermissionMiddleware {
         
         $user = Auth::user();
 
-        if (!$user || ($permission === 'modify-todos' &&  !$user->hasPermission($permission))) {
-            abort(403, 'Accès refusé.');
+        if (!$user || !$user->hasPermission($permission)) {
+            abort(Response::HTTP_FORBIDDEN, 'Accès refusé.');
         }
 
         return $next($request);

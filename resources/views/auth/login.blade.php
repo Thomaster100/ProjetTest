@@ -38,9 +38,18 @@
             </div>
             <button type="submit" class="btn btn-primary">Se connecter</button>
         </form>
+
+        <div class="social-auth-btns mt-4">
+            <a href="{{ route('social.redirect', 'google') }}" class="btn btn-danger">Se connecter avec Google</a>
+            <a href="{{ route('social.redirect', 'facebook') }}" class="btn btn-primary disabled">Se connecter avec Facebook</a>
+            <a href="{{ route('social.redirect', 'x') }}" class="btn btn-dark disabled">Se connecter avec X (Twitter)</a>
+            <a href="{{ route('social.redirect', 'linkedin-openid') }}" class="btn btn-info disabled">Se connecter avec LinkedIn</a>
+        </div>
+
         <div class="mt-4">
             <a href="{{ route('password.request') }}" class="btn btn-primary">Mot de passe oublié ?</a>
         </div>
+
     </div>
         <div class="position-fixed bottom-0 end-0 m-4">
             <a href="{{ route('users.create') }}" class="btn btn-primary btn-lg" title="Ajouter un compte utilisateur">
