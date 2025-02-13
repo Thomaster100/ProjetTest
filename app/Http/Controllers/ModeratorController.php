@@ -21,7 +21,7 @@ class ModeratorController extends Controller {
 
     public function approvePost($id) {
         $post = Post::findOrFail($id);
-        $post->update(['approved' => true]); // Assure-toi d’avoir une colonne `approved` dans la table `posts`
+        $post->update(['approved' => true]);
         return redirect()->route('moderator.index')->with('success', 'Post approuvé.');
     }
 }
