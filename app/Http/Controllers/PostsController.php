@@ -128,28 +128,29 @@ public function createNewPost() {
 
         /* --------------- Enregistrement avec image et fichier ------------------- */
 
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required|string',
-            'author' => 'required|string',
-            'value' => 'required|numeric|min:0|max:5',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // max 2mb
-            'file' => 'nullable|mimes:pdf,doc,docx,txt|max:5120', // max 5mb
-        ]);
+        $validatedData = $request->validated();
 
         $user = auth()->user();
         $userFolder = 'user-' . Str::slug($user->name); // ex: user-tom
 
         Storage::disk('public')->makeDirectory("posts/{$userFolder}");
 
-        $imagePath = $request->file('image') ? $request->file('image')->store("posts/{$userFolder}", 'public') : null;
-        $filePath = $request->file('file') ? $request->file('file')->store("posts/{$userFolder}", 'public') : null;
+        $imagePath = null;
+        $filePath = null; 
+
+        if($request->file('image')) {
+            $imagePath = $request->file('image')->store("posts/{$userFolder}", 'public');
+        }
+
+        if($request->file('file')) {
+            $filePath = $request->file('file')->store("posts/{$userFolder}", 'public');
+        }
 
         Posts::create([
-            'title' => $request->title,
-            'content' => $request->content,
-            'author' => $request->author,
-            'value' => $request->value,
+            'title' =>  $validatedData['title'],
+            'content' =>  $validatedData['content'],
+            'author' =>  $validatedData['author'],
+            'value' =>  $validatedData['value'],
             'image' => $imagePath,
             'file' => $filePath,
             'user_folder' => $userFolder
@@ -207,10 +208,10 @@ public function createNewPost() {
     // return redirect()->route('postList')->with('success', 'Post mis à jour avec succès!');
 
     /* ------------  UPDATE AVEC FICHIERS ET IMAGE ------------------*/
-
+    
+    $validatedData = $request->validated();
     $post = Posts::findOrFail($id);
 
-    // Récupérer l'utilisateur et générer son dossier
     $user = auth()->user();
     $userFolder = 'user-' . Str::slug($user->name);
 
@@ -219,6 +220,7 @@ public function createNewPost() {
 
     // Gestion des fichiers
     $imagePath = $post->image;
+
     if ($request->hasFile('image')) {
         // Supprimer l'ancienne image si elle existe
         if ($post->image) {
@@ -229,6 +231,7 @@ public function createNewPost() {
     }
 
     $filePath = $post->file;
+
     if ($request->hasFile('file')) {
         if ($post->file) {
             Storage::disk('public')->delete($post->file);
@@ -237,10 +240,10 @@ public function createNewPost() {
     }
 
     $post->update([
-        'title' => $request->title,
-        'content' => $request->content,
-        'author' => $request->author,
-        'value' => $request->value,
+        'title' =>  $validatedData['title'],
+        'content' =>  $validatedData['content'],
+        'author' =>  $validatedData['author'],
+        'value' =>  $validatedData['value'],
         'image' => $imagePath,
         'file' => $filePath,
         'user_folder' => $userFolder,

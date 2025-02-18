@@ -44,7 +44,7 @@ class PostsRequest extends FormRequest
             'content' => 'required|string',
             'author' => 'required|string',
             'value' => 'required|numeric|min:0|max:5',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // max 2mb
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:4096', // max 4mb
             'file' => 'nullable|mimes:pdf,doc,docx,txt|max:5120', // max 5mb
         ];
     }
@@ -52,7 +52,34 @@ class PostsRequest extends FormRequest
     public function messages() {
 
         return [
-            'title.required' => 'le titre est obligatoire.'
+            
+            // Validations pour le titre
+            'title.required' => 'Le titre est obligatoire.',
+            'title.string' => 'Le titre doit être une chaîne de caractères.',
+            'title.max' => 'Le titre ne peut pas dépasser 255 caractères.',
+    
+            // Validations pour le contenu
+            'content.required' => 'Le contenu est obligatoire.',
+            'content.string' => 'Le contenu doit être une chaîne de caractères.',
+    
+            // Validations pour l’auteur
+            'author.required' => 'Le champ auteur est obligatoire.',
+            'author.string' => 'Le champ auteur doit être une chaîne de caractères.',
+    
+            // Validations pour la notation
+            'value.required' => 'La valeur est obligatoire.',
+            'value.numeric' => 'La valeur doit être un nombre.',
+            'value.min' => 'La valeur minimale autorisée est 0.',
+            'value.max' => 'La valeur maximale autorisée est 5.',
+    
+            // Validations pour l’image
+            'image.image' => 'Le fichier doit être une image.',
+            'image.mimes' => 'L’image doit être au format jpeg, png, jpg ou gif.',
+            'image.max' => 'L’image ne doit pas dépasser 2 Mo.',
+    
+            // Validations pour le fichier joint
+            'file.mimes' => 'Le fichier doit être au format pdf, doc, docx ou txt.',
+            'file.max' => 'Le fichier ne doit pas dépasser 5 Mo.',
         ];
         
     }

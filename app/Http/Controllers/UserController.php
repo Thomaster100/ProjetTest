@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Permission;
@@ -56,32 +57,35 @@ class UserController extends Controller
 
     public function finishRegistrationView($id) {
         $user = User::findOrFail($id);
-        return view('users.finish-creation', ['id' => $user->id]);
+        $roles = Role::all();
+        return view('users.finish-creation', [
+            'id' => $user->id,
+            'roles' => $roles
+        ]);
     }
 
     public function completeUser(Request $request, $id) {
 
         $user = User::findOrFail($id);
-        if($request->password !== $request->confirmPassword) {
-            return redirect()->route('finish-register', ['id' => $user->id])->with('error', 'Les mots de passe ne correspondent pas');
-        }
 
-        $request->validate([
-            'password' => 'required|string|min:8',
-            'role_id' => 'required|in:user,admin',
+        // Nouveau validateurs avec la gestion des rôles
+        $validatedData = $request->validate([
+            'password' => 'required|string|min:8|confirmed', 
+            'role_id' => ['required', Rule::exists('roles', 'id')],
+        ], [
+            'password.required' => 'Le mot de passe est obligatoire.',
+            'password.min' => 'Le mot de passe doit contenir au moins 8 caractères.',
+            'password.confirmed' => 'Les mots de passe ne correspondent pas.',
+            'role_id.required' => 'Le rôle est obligatoire.',
+            'role_id.exists' => 'Le rôle sélectionné est invalide.',
         ]);
-
-
-        // Retrouver le role dans la table (pour l'ID)
-        $role = Role::where('name', $request->role_id)->first();
 
         $user->update([
-            'password' =>  bcrypt($request->input('password')),
-            'role_id' => $role->id
-
+            'password' => Hash::make($validatedData['password']),
+            'role_id' => $validatedData['role_id']
         ]);
 
-        return redirect()->route('login')->with('success', 'Utilisateur finalisé');
+        return redirect()->route('login')->with('success', 'Utilisateur finalisé avec succès.');
     }
 
     /**

@@ -15,6 +15,8 @@ return new class extends Migration
         });
     }
 
+    // EN SQL : CREATE INDEX postsIdx ON table_name ('id', 'user_folder'...);
+
     public function down() {
         Schema::table('posts', function (Blueprint $table) {
             $table->dropColumn(['image', 'file', 'user_folder']);

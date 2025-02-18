@@ -50,6 +50,11 @@
             <a href="{{ route('password.request') }}" class="btn btn-primary">Mot de passe oublié ?</a>
         </div>
 
+        <div class="map-routes-container mt-3">
+            <a href="{{ route('map.index') }}" class="btn btn-success">Voir la map</a>
+            <a href="{{ route('map.multiple_markers') }}" class="btn btn-success">Map avec pins</a>
+        </div>
+
     </div>
         <div class="position-fixed bottom-0 end-0 m-4">
             <a href="{{ route('users.create') }}" class="btn btn-primary btn-lg" title="Ajouter un compte utilisateur">
