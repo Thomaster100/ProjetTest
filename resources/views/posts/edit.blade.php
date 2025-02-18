@@ -15,7 +15,7 @@
             <div class="card-body">
                 <!-- Utilisation de ROUTE MODEL BINDING pour passer automatiquement le post à modifier -->
                 <!-- Le formulaire met à jour le post existant en utilisant son ID -->
-                <form method="POST" action="{{ route('posts.update', $post) }}">
+                <form method="POST" action="{{ route('posts.update', $post) }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
     
@@ -68,6 +68,38 @@
                             class="form-control" 
                             value="{{ old('value', $post->value) }}" 
                             required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Image :</label>
+                    
+                        <!-- Affichage de l'image actuelle -->
+                        @if($post->image)
+                            <div class="mb-2">
+                                <img src="{{ asset('storage/posts/' . $post->user_folder . '/' . basename($post->image)) }}" 
+                                     alt="Image du post" class="img-fluid rounded" style="max-width: 200px;">
+                            </div>
+                        @endif
+                    
+                        <input type="file" name="image" class="form-control">
+                        @error('image') <div class="text-danger">{{ $message }}</div> @enderror
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="file" class="form-label">Fichier :</label>
+                    
+                        <!-- Affichage du fichier actuel -->
+                        @if($post->file)
+                            <div class="mb-2">
+                                <a href="{{ asset('storage/posts/' . $post->user_folder . '/' . basename($post->file)) }}" 
+                                   class="btn btn-outline-primary" download>
+                                    Télécharger le fichier actuel
+                                </a>
+                            </div>
+                        @endif
+                    
+                        <input type="file" name="file" class="form-control">
+                        @error('file') <div class="text-danger">{{ $message }}</div> @enderror
                     </div>
     
                     <!-- Boutons pour annuler ou enregistrer -->

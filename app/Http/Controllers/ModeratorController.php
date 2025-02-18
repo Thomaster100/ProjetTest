@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\Comment;
 
 class ModeratorController extends Controller {
+    
     public function index() {
         $posts = Post::all();
         $comments = Comment::all();

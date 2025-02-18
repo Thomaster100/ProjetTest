@@ -42,8 +42,10 @@ class PostsRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'author' => 'required|string|max:255',
-            'value' => 'required|numeric|min:0|max:5',  // Exemple de valeur entre 0 et 5
+            'author' => 'required|string',
+            'value' => 'required|numeric|min:0|max:5',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // max 2mb
+            'file' => 'nullable|mimes:pdf,doc,docx,txt|max:5120', // max 5mb
         ];
     }
 

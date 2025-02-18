@@ -21,6 +21,21 @@
                             <p class="card-text">Auteur : {{ $post->author }}</p>
                             <p class="card-text">Valeur : {{ $post->value }}</p>
 
+                            {{-- IMAGES ET FICHIERS --}}
+                            <div class="d-flex flex-column align-items-start p-3 border rounded">
+                                @if($post->image)
+                                    <img src="{{ asset('storage/posts/' . $post->user_folder . '/' . basename($post->image)) }}" 
+                                         alt="Image du post" class="img-fluid mb-2" style="max-width: 200px;">
+                                @endif
+                        
+                                @if($post->file)
+                                    <a href="{{ asset('storage/posts/' . $post->user_folder . '/' . basename($post->file)) }}" 
+                                       class="btn btn-primary" download>
+                                        Télécharger le fichier
+                                    </a>
+                                @endif
+                            </div>
+
                             <div class="d-flex justify-content-end">
                                 <!-- Bouton Modifier -->
                                 @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('editor'))
