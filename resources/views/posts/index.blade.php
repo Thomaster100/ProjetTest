@@ -29,6 +29,12 @@
     </div>
  </div>
 
+ <div class="my-3">
+    <a href="{{ route('createPost') }}" class="btn btn-success">
+        <i class="bi bi-plus-circle"></i> Ajouter un post
+    </a>    
+ </div>
+
     @include('posts.partials.results')
     
 </div>

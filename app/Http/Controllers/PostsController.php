@@ -8,6 +8,8 @@ use App\Models\Posts;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 
 class PostsController extends Controller {
@@ -113,17 +115,51 @@ public function createNewPost() {
 
     // 2eme manière en utilisant l'assignation en masse, d'ou le fait d'avoir complété les attributs dans le model de Posts...
 
-    public function store(PostsRequest $request)
-    {
-        $validatedData = $request->validated();
+    public function store(PostsRequest $request) {
+
+        // $validatedData = $request->validated();
 
         // Création du post avec la méthode create() et Mass Assignment
-        Posts::create($validatedData);
+        // Posts::create($validatedData);
 
         // Redirection après création avec un message de succès
-        return redirect()->route('postList')->with('success', 'Post créé avec succès!');
-    }
+        // return redirect()->route('postList')->with('success', 'Post créé avec succès!');
 
+
+        /* --------------- Enregistrement avec image et fichier ------------------- */
+
+        $validatedData = $request->validated();
+
+        $user = auth()->user();
+        $userFolder = 'user-' . Str::slug($user->name); // ex: user-tom
+
+        Storage::disk('public')->makeDirectory("posts/{$userFolder}");
+
+        $imagePath = null;
+        $filePath = null; 
+
+        if($request->file('image')) {
+            $imagePath = $request->file('image')->store("posts/{$userFolder}", 'public');
+        }
+
+        if($request->file('file')) {
+            $filePath = $request->file('file')->store("posts/{$userFolder}", 'public');
+        }
+
+        Posts::create([
+            'title' =>  $validatedData['title'],
+            'content' =>  $validatedData['content'],
+            'author' =>  $validatedData['author'],
+            'value' =>  $validatedData['value'],
+            'image' => $imagePath,
+            'file' => $filePath,
+            'user_folder' => $userFolder
+        ]);
+
+        return redirect()->route('postList')->with('success', 'Post créé avec succès !');
+
+
+    }
 
 
     // -------------- EDITION -------------------------- //
@@ -158,18 +194,63 @@ public function createNewPost() {
 
     public function update(PostsRequest $request, $id) {
 
-        $validatedData = $request->validated();
-        $post = Posts::findOrFail($id);
+        // $validatedData = $request->validated();
+        // $post = Posts::findOrFail($id);
 
-        $post->title = $validatedData['title'];
-        $post->content = $validatedData['content'];
-        $post->author = $validatedData['author'];
-        $post->value = $validatedData['value'];
+        // $post->title = $validatedData['title'];
+        // $post->content = $validatedData['content'];
+        // $post->author = $validatedData['author'];
+        // $post->value = $validatedData['value'];
 
-        // OU $post->update($validatedData);
+        // // OU $post->update($validatedData);
 
-        $post->save();
-        return redirect()->route('postList')->with('success', 'Post mis à jour avec succès!');
+    // $post->save();
+    // return redirect()->route('postList')->with('success', 'Post mis à jour avec succès!');
+
+    /* ------------  UPDATE AVEC FICHIERS ET IMAGE ------------------*/
+    
+    $validatedData = $request->validated();
+    $post = Posts::findOrFail($id);
+
+    $user = auth()->user();
+    $userFolder = 'user-' . Str::slug($user->name);
+
+    // Vérifier si le dossier utilisateur existe, sinon le créer
+    Storage::disk('public')->makeDirectory("posts/{$userFolder}");
+
+    // Gestion des fichiers
+    $imagePath = $post->image;
+
+    if ($request->hasFile('image')) {
+        // Supprimer l'ancienne image si elle existe
+        if ($post->image) {
+            Storage::disk('public')->delete($post->image);
+        }
+        // Enregistrer la nouvelle image dans le dossier utilisateur
+        $imagePath = $request->file('image')->store("posts/{$userFolder}", 'public');
+    }
+
+    $filePath = $post->file;
+
+    if ($request->hasFile('file')) {
+        if ($post->file) {
+            Storage::disk('public')->delete($post->file);
+        }
+        $filePath = $request->file('file')->store("posts/{$userFolder}", 'public');
+    }
+
+    $post->update([
+        'title' =>  $validatedData['title'],
+        'content' =>  $validatedData['content'],
+        'author' =>  $validatedData['author'],
+        'value' =>  $validatedData['value'],
+        'image' => $imagePath,
+        'file' => $filePath,
+        'user_folder' => $userFolder,
+    ]);
+
+    return redirect()->route('postList')->with('success', 'Post mis à jour avec succès !');
+
     }
 
     // DESTROY
@@ -178,9 +259,30 @@ public function createNewPost() {
     public function destroy(Posts $post) {
 
     // Suppression physique
+    // $post->delete();
+
+    // return redirect()->route('postList')->with('success', 'Post supprimé avec succès!');
+
+
+    /* --- Suppression avec gestion image et fichiers ---*/
+
+    if ($post->image) {
+        Storage::disk('public')->delete($post->image);
+    }
+
+    if ($post->file) {
+        Storage::disk('public')->delete($post->file);
+    }
+
+    // Supprimer le dossier utilisateur s'il est vide
+    $userFolder = "posts/{$post->user_folder}";
+    if (count(Storage::disk('public')->files($userFolder)) === 0) {
+        Storage::disk('public')->deleteDirectory($userFolder);
+    }
+
     $post->delete();
 
-    return redirect()->route('postList')->with('success', 'Post supprimé avec succès!');
+    return redirect()->route('postList')->with('success', 'Post supprimé avec succès !');
 }
 
     // Par ID

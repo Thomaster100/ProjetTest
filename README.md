@@ -168,3 +168,22 @@ Pour creer le controller : `php artisan make:controller MapController`
 POSTMAN
 
 Documentation de Postman : https://learning.postman.com/docs/introduction/overview/s
+
+----------------------------------------------------------------
+
+GESTION DES FICHIERS
+
+Classe : Storage (`use Illuminate\Support\Facades\Storage`)
+
+Certaines méthodes d'exemple : 
+
+-> `Storage::disk('')` // Exemple : Storage::disk('')
+-> `MakeDirectory()`
+-> `removeDirectory()`
+-> `files()` Pour lister les fichiers
+
+Pour linker le dossier laravel 'public' depuis l'extérieur (et eviter les erreur type 403)
+
+`php artisan storage:link`
+
+----------------------------------------------------------------

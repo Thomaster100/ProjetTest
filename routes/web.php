@@ -8,12 +8,18 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EmailVerificationController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest; // A ajouter
 use App\Http\Controllers\MapController;
+use App\Http\Controllers\SocialAuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ModeratorController;
+use App\Http\Controllers\EditorController;
 
 // ROUTE DE BASE DE LARAVEL
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// ROUTE DASHBOARD ADMIN
+Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // ROUTES INSCRIPTION UTILISATEUR
 Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
@@ -24,7 +30,12 @@ Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 
 Route::post('/login', [AuthController::class, 'login']); 
 
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout'); 
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// AUTHENTIFICATION EXTERNE
+Route::get('/auth/redirect/{provider}', [SocialAuthController::class, 'redirect'])->name('social.redirect');
+Route::get('/auth/callback/{provider}', [SocialAuthController::class, 'callback'])->name('social.callback');
+
 
 // ROUTE TEMPORAIRE D'AJOUT DE DONNEES "BRUT" - sans formulaire (Voir controlleur)
 Route::get('/addPostList', [PostsController::class, 'create'])->name('addPostList');
@@ -114,7 +125,6 @@ Route::prefix('posts/{postId}/comments')->as('comments.')->group(function () {
 });
 
 // Version avec ressources (crée toutes les routes CRUD automatiquement)
-
 Route::resource('posts.comments', CommentController::class);
 
 // ROUTE AVEC MIDDLEWARE POUR LES PERMISSIONS
@@ -156,6 +166,32 @@ Route::get('/map/multiple-markers', [MapController::class, 'showMultipleMarkers'
 
 Route::get('/map/get-markers', [MapController::class, 'getMarkers'])->name('map.get_markers');
 
-// Route postman 
+// Route postman de test
 Route::get('/postman-test', [MapController::class, 'printPostmanDatas'])->name('/postman-test');
 
+// Routes accessibles uniquement aux administrateurs
+Route::middleware(['auth', PermissionMiddleware::class . ':manage-users'])->group(function () {
+    Route::get('/admin', 'AdminController@index')->name('admin.dashboard');
+});
+Route::middleware(['auth', PermissionMiddleware::class . ':approve-todos'])->group(function () {
+    Route::get('/moderate', 'ModeratorController@index')->name('moderator.dashboard');
+});
+Route::middleware(['auth', PermissionMiddleware::class . ':create-todos'])->group(function () {
+    Route::get('/editor', 'EditorController@index')->name('editor.dashboard');
+});
+
+// Routes pour les modérateurs
+Route::middleware(['auth', 'moderator'])->group(function () {
+    Route::get('/moderator', [ModeratorController::class, 'index'])->name('moderator.index');
+    Route::delete('/moderator/comment/{id}', [ModeratorController::class, 'deleteComment'])->name('moderator.delete_comment');
+    Route::post('/moderator/approve/{id}', [ModeratorController::class, 'approvePost'])->name('moderator.approve_post');
+});
+
+// Routes pour les éditeurs
+Route::middleware(['auth', 'editor'])->group(function () {
+    Route::get('/editor', [EditorController::class, 'index'])->name('editor.index');
+    Route::get('/editor/create', [EditorController::class, 'createPost'])->name('editor.create_post');
+    Route::post('/editor/store', [EditorController::class, 'storePost'])->name('editor.store_post');
+    Route::get('/editor/edit/{post}', [EditorController::class, 'editPost'])->name('editor.edit_post');
+    Route::put('/editor/update/{post}', [EditorController::class, 'updatePost'])->name('editor.update_post');
+});

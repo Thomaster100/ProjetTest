@@ -30,11 +30,20 @@
                 <input type="password" id="password" name="confirmPassword" class="form-control" required>
             </div>
 
-             <div class="mb-3">
+             {{-- <div class="mb-3">
                 <label for="role_id" class="form-label">Rôle</label>
                 <select id="role_id" name="role_id" class="form-select" required>
                     <option value="user" {{ old('role') === 'user' ? 'selected' : '' }}>Utilisateur</option>
                     <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Administrateur</option>
+                </select>
+            </div> --}}
+
+            <div class="mb-3">
+                <label for="role_id" class="form-label">Rôle</label>
+                <select name="role_id" id="role_id" class="form-select" required>
+                    @foreach($roles as $role)
+                        <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
+                    @endforeach
                 </select>
             </div>
 

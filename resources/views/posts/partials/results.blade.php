@@ -1,52 +1,68 @@
 <div class="container-fluid mx-auto">
 
-        @if($postList->isEmpty())
+    @if($postList->isEmpty())
         <p class="text-center">Aucun résultat trouvé.</p>
     @else
-    <div id="search-results">
+        <div id="search-results">
 
-        {{-- SPINNER --}}
-        <div id="loading-spinner" class="text-center my-4" style="display: none;">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Chargement...</span>
+            {{-- SPINNER --}}
+            <div id="loading-spinner" class="text-center my-4" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Chargement...</span>
+                </div>
             </div>
-        </div>
 
-                @foreach($postList as $post)
+            @foreach($postList as $post)
                 <div class="row mb-3">
                     <div class="col-md-8 m-1 p-1 post-container card">
                         <div class="card-body">
-                            <p class="h5 card-title">{{ $post->title }}</h5>
+                            <p class="h5 card-title">{{ $post->title }}</p>
                             <p class="card-text">{{ $post->content }}</p>
                             <p class="card-text">Auteur : {{ $post->author }}</p>
                             <p class="card-text">Valeur : {{ $post->value }}</p>
-        
+
+                            {{-- IMAGES ET FICHIERS --}}
+                            <div class="d-flex flex-column align-items-start p-3 border rounded">
+                                @if($post->image)
+                                    <img src="{{ asset('storage/posts/' . $post->user_folder . '/' . basename($post->image)) }}" 
+                                         alt="Image du post" class="img-fluid mb-2" style="max-width: 200px;">
+                                @endif
+                        
+                                @if($post->file)
+                                    <a href="{{ asset('storage/posts/' . $post->user_folder . '/' . basename($post->file)) }}" 
+                                       class="btn btn-primary" download>
+                                        Télécharger le fichier
+                                    </a>
+                                @endif
+                            </div>
+
                             <div class="d-flex justify-content-end">
                                 <!-- Bouton Modifier -->
-                                <a href="{{ route('posts.edit', $post) }}" class="btn btn-secondary me-2"
-                                    @if(auth()->user()->role->name !== 'admin' || !auth()->user()->hasPermission('modify-todos'))
-                                        style="pointer-events: none; opacity: 0.5;"
-                                    @endif
-                                >Modifier</a>
-        
+                                @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('editor'))
+                                    <a href="{{ route('posts.edit', $post) }}" class="btn btn-secondary me-2">Modifier</a>
+                                @else
+                                    <a href="#" class="btn btn-secondary me-2 disabled" aria-disabled="true">Modifier</a>
+                                @endif
+
                                 <!-- Bouton Supprimer -->
-                                <form method="POST" action="{{ route('posts.destroy', $post) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-primary"
-                                        type="submit"
-                                        @if(auth()->user()->role->name !== 'admin' || !auth()->user()->hasPermission('modify-todos'))
-                                            disabled
-                                        @endif
-                                        onclick="return confirm('Voulez-vous vraiment supprimer ce post ?');"
-                                    >Supprimer</button>
-                                </form>
+                                @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('moderator'))
+                                    <form method="POST" action="{{ route('posts.destroy', $post) }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-danger"
+                                            type="submit"
+                                            onclick="return confirm('Voulez-vous vraiment supprimer ce post ?');"
+                                        >Supprimer</button>
+                                    </form>
+                                @else
+                                    <button class="btn btn-danger disabled" aria-disabled="true">Supprimer</button>
+                                @endif
                             </div>
                         </div>
                     </div>
                 </div>
             @endforeach
-    </div>
+
+        </div>
     @endif
 </div>
-
