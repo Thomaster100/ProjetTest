@@ -123,4 +123,9 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    // AJOUT INTERVENTION IMAGE (ALIAS)
+    'aliases' => [
+        'Image' => Intervention\Image\Facades\Image::class,
+    ],
+
 ];

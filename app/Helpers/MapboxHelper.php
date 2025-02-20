@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use Illuminate\Support\Facades\Http; //  A ajouter
+use Illuminate\Support\Facades\Http; //  A ajouter pour les requetes HTTP
 
 class MapboxHelper {
 

@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PostsRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use App\Models\Posts;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image; // A ajouter pour la gestion d'image
 
 
 class PostsController extends Controller {
@@ -115,6 +117,34 @@ public function createNewPost() {
 
     // 2eme manière en utilisant l'assignation en masse, d'ou le fait d'avoir complété les attributs dans le model de Posts...
 
+
+    public function editImage(Request $request, $id) {
+
+        dd($request->all());
+        $post = Posts::findOrFail($id);
+    
+        if ($request->filled('cropped_image')) {
+            if ($post->image) {
+                Storage::disk('public')->delete($post->image);
+            }
+    
+            $imageData = $request->input('cropped_image');
+            $image = Image::make($imageData); // Creer l'image venant d'intervention
+            $extension = explode('/', $image->mime())[1]; // 'jpg', 'png'...
+            $filename = time() . '.' . $extension;
+            $path = "posts/{$post->user_folder}/$filename";
+    
+            Storage::disk('public')->put($path, (string) $image->encode($extension, 70)); // 70% de compression
+    
+            $post->update(['image' => $path]);
+    
+            return response()->json(['success' => true, 'image' => asset("storage/$path")]);
+        }
+    
+        return response()->json(['success' => false, 'message' => 'Aucune image reçue']);
+    }
+    
+
     public function store(PostsRequest $request) {
 
         // $validatedData = $request->validated();
@@ -131,34 +161,82 @@ public function createNewPost() {
         $validatedData = $request->validated();
 
         $user = auth()->user();
-        $userFolder = 'user-' . Str::slug($user->name); // ex: user-tom
+        $userFolder = 'user-' . Str::slug($user->name);
 
         Storage::disk('public')->makeDirectory("posts/{$userFolder}");
 
+        /* --- Vérification du texte SightEngine --- */
+
+        // $response = Http::withOptions(['verify' => false])->post('https://api.sightengine.com/1.0/text/check.json', [
+        //     'text' => $validatedData['content'],
+        //     'lang' => 'fr',
+        //     'mode' => 'standard',
+        //     'api_user' => env('SIGHTENGINE_USER'),
+        //     'api_secret' => env('SIGHTENGINE_SECRET'),
+        // ]);
+
+        // $result = $response->json();
+
+        // if (!empty($result['profanity']['matches'])) {
+        //     return redirect()->back()->with('error', 'Le contenu du post contient des mots inappropriés.');
+        // }
+
+        /* --- Gestion des images --- */
+
         $imagePath = null;
-        $filePath = null; 
 
-        if($request->file('image')) {
+        if ($request->filled('cropped_image')) {
+
+            $imageData = $request->input('cropped_image');
+            $image = Image::make($imageData);
+            $extension = explode('/', $image->mime())[1];
+            $filename = time() . '.' . $extension;
+            $path = "posts/{$userFolder}/$filename";
+
+            Storage::disk('public')->put($path, (string) $image->encode($extension, 70));
+            $imagePath = $path;
+
+        } elseif ($request->hasFile('image')) {
+
+            // VERIFICATION FAITES EN AMONT JS
             $imagePath = $request->file('image')->store("posts/{$userFolder}", 'public');
+                
+            /* ---- MODERATION BACK-END --- */ 
+
+            // $tempPath = $request->file('image')->store("temp", 'public');
+            // $imageUrl = asset("storage/$tempPath");
+
+            // $response = Http::withOptions(['verify' => false])->post('https://api.sightengine.com/1.0/check.json', [
+            //     'url' => $imageUrl,
+            //     'models' => 'nudity,offensive,gore',
+            //     'api_user' => env('SIGHTENGINE_USER'),
+            //     'api_secret' => env('SIGHTENGINE_SECRET'),
+            // ]);
+
+            // $result = $response->json();
+
+            // if ($result['nudity']['raw'] > 0.5 || $result['offensive']['prob'] > 0.5 || $result['gore']['prob'] > 0.5) {
+            //     Storage::disk('public')->delete($tempPath);
+            //     return redirect()->back()->with('error', 'L’image contient du contenu inapproprié.');
+            // }
+
         }
 
-        if($request->file('file')) {
-            $filePath = $request->file('file')->store("posts/{$userFolder}", 'public');
-        }
+        /* --- Gestion des fichiers --- */
+        $filePath = $request->hasFile('file') ? $request->file('file')->store("posts/{$userFolder}", 'public') : null;
 
+        /* --- Création du post --- */
         Posts::create([
-            'title' =>  $validatedData['title'],
-            'content' =>  $validatedData['content'],
-            'author' =>  $validatedData['author'],
-            'value' =>  $validatedData['value'],
+            'title' => $validatedData['title'],
+            'content' => $validatedData['content'],
+            'author' => $validatedData['author'],
+            'value' => $validatedData['value'],
             'image' => $imagePath,
             'file' => $filePath,
-            'user_folder' => $userFolder
+            'user_folder' => $userFolder,
         ]);
 
         return redirect()->route('postList')->with('success', 'Post créé avec succès !');
-
-
     }
 
 
@@ -196,62 +274,106 @@ public function createNewPost() {
 
         // $validatedData = $request->validated();
         // $post = Posts::findOrFail($id);
-
+    
         // $post->title = $validatedData['title'];
         // $post->content = $validatedData['content'];
         // $post->author = $validatedData['author'];
         // $post->value = $validatedData['value'];
-
-        // // OU $post->update($validatedData);
-
-    // $post->save();
-    // return redirect()->route('postList')->with('success', 'Post mis à jour avec succès!');
-
-    /* ------------  UPDATE AVEC FICHIERS ET IMAGE ------------------*/
     
-    $validatedData = $request->validated();
-    $post = Posts::findOrFail($id);
-
-    $user = auth()->user();
-    $userFolder = 'user-' . Str::slug($user->name);
-
-    // Vérifier si le dossier utilisateur existe, sinon le créer
-    Storage::disk('public')->makeDirectory("posts/{$userFolder}");
-
-    // Gestion des fichiers
-    $imagePath = $post->image;
-
-    if ($request->hasFile('image')) {
-        // Supprimer l'ancienne image si elle existe
-        if ($post->image) {
-            Storage::disk('public')->delete($post->image);
+        // // OU $post->update($validatedData);
+    
+        // $post->save();
+        // return redirect()->route('postList')->with('success', 'Post mis à jour avec succès!');
+    
+        /* ------------  UPDATE AVEC FICHIERS ET IMAGE ------------------*/
+    
+        $validatedData = $request->validated();
+        $post = Posts::findOrFail($id);
+        $user = auth()->user();
+        $userFolder = 'user-' . Str::slug($user->name);
+    
+        Storage::disk('public')->makeDirectory("posts/{$userFolder}");
+    
+        /* --- Vérification du texte avec SightEngine --- */
+        $response = Http::withOptions(['verify' => false])->post('https://api.sightengine.com/1.0/text/check.json', [
+            'text' => $validatedData['content'],
+            'lang' => 'fr',
+            'mode' => 'standard',
+            'api_user' => env('SIGHTENGINE_USER'),
+            'api_secret' => env('SIGHTENGINE_SECRET'),
+        ]);
+    
+        $result = $response->json();
+    
+        if (!empty($result['profanity']['matches'])) {
+            return redirect()->back()->with('error', 'Le contenu du post contient des mots inappropriés.');
         }
-        // Enregistrer la nouvelle image dans le dossier utilisateur
-        $imagePath = $request->file('image')->store("posts/{$userFolder}", 'public');
-    }
-
-    $filePath = $post->file;
-
-    if ($request->hasFile('file')) {
-        if ($post->file) {
-            Storage::disk('public')->delete($post->file);
+    
+        /* --- Gestion des images --- */
+        $imagePath = $post->image;
+    
+        if ($request->filled('cropped_image')) {
+            if ($post->image) {
+                Storage::disk('public')->delete($post->image);
+            }
+    
+            $imageData = $request->input('cropped_image');
+            $image = Image::make($imageData);
+            $extension = explode('/', $image->mime())[1];
+            $filename = time() . '.' . $extension;
+            $path = "posts/{$userFolder}/$filename";
+    
+            Storage::disk('public')->put($path, (string) $image->encode($extension, 90));
+            $imagePath = $path;
+        } elseif ($request->hasFile('image')) {
+            if ($post->image) {
+                Storage::disk('public')->delete($post->image);
+            }
+    
+            $tempPath = $request->file('image')->store("temp", 'public');
+            $imageUrl = asset("storage/$tempPath");
+    
+            $response = Http::withOptions(['verify' => false])->post('https://api.sightengine.com/1.0/check.json', [
+                'url' => $imageUrl,
+                'models' => 'nudity,offensive,gore',
+                'api_user' => env('SIGHTENGINE_USER'),
+                'api_secret' => env('SIGHTENGINE_SECRET'),
+            ]);
+    
+            $result = $response->json();
+    
+            if ($result['nudity']['raw'] > 0.5 || $result['offensive']['prob'] > 0.5 || $result['gore']['prob'] > 0.5) {
+                Storage::disk('public')->delete($tempPath);
+                return redirect()->back()->with('error', 'L’image contient du contenu inapproprié.');
+            }
+    
+            $imagePath = $request->file('image')->store("posts/{$userFolder}", 'public');
         }
-        $filePath = $request->file('file')->store("posts/{$userFolder}", 'public');
+    
+        /* --- Gestion des fichiers --- */
+        $filePath = $post->file;
+    
+        if ($request->hasFile('file')) {
+            if ($post->file) {
+                Storage::disk('public')->delete($post->file);
+            }
+            $filePath = $request->file('file')->store("posts/{$userFolder}", 'public');
+        }
+    
+        /* --- Mise à jour du post --- */
+        $post->update([
+            'title' => $validatedData['title'],
+            'content' => $validatedData['content'],
+            'author' => $validatedData['author'],
+            'value' => $validatedData['value'],
+            'image' => $imagePath,
+            'file' => $filePath,
+            'user_folder' => $userFolder,
+        ]);
+    
+        return redirect()->route('postList')->with('success', 'Post mis à jour avec succès !');
     }
-
-    $post->update([
-        'title' =>  $validatedData['title'],
-        'content' =>  $validatedData['content'],
-        'author' =>  $validatedData['author'],
-        'value' =>  $validatedData['value'],
-        'image' => $imagePath,
-        'file' => $filePath,
-        'user_folder' => $userFolder,
-    ]);
-
-    return redirect()->route('postList')->with('success', 'Post mis à jour avec succès !');
-
-    }
+    
 
     // DESTROY
 

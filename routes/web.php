@@ -195,3 +195,6 @@ Route::middleware(['auth', 'editor'])->group(function () {
     Route::get('/editor/edit/{post}', [EditorController::class, 'editPost'])->name('editor.edit_post');
     Route::put('/editor/update/{post}', [EditorController::class, 'updatePost'])->name('editor.update_post');
 });
+
+// Routes pour la gestion d'image (édition)
+Route::post('/edit-image/{id}', [PostController::class, 'editImage'])->name('edit.image');

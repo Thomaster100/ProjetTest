@@ -1,118 +1,169 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    <!-- Ajout de Cropper.js -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
     <title>Créer un Post</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+
 <body>
-    
-    {{-- Mauvaise pratique --}}
-    {{-- Mauvaise implémentation : pas de protection CSRF et champs incomplets --}}
-    
-    {{-- <form action="{{route('createPost')}}" method="POST">
+    <div class="container mt-5">
+        <h2 class="text-center">Créer un Post</h2>
 
-        <br>
-           <label for="title">TITLE : </label>
-           <input name="title" type="text" class="title-field">
-        </br>
+        <div class="card">
+            <div class="card-body">
+                <form id="postForm">
+                    @csrf
 
-        <br>
-        <label for="title">CONTENT : </label>
-            <input name="content" type="text" class="content-field">
-        </br>
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Titre :</label>
+                        <input type="text" name="title" id="title" class="form-control" placeholder="Titre" required>
+                    </div>
 
-     <br>
-        <label for="author">AUTHOR : </label>
-        <input name="author" type="text" class="author-field">
-    </br>
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Contenu :</label>
+                        <textarea name="content" id="content" class="form-control" rows="5" placeholder="Contenu" required></textarea>
+                        <div id="contentWarning" class="text-danger mt-2" style="display: none;">⚠️ Le contenu peut contenir des mots inappropriés.</div>
+                    </div>
 
-    <br>
-        <label for="value">VALUE : </label>
-        <input name="value" type="number" class="value-field">
-    </br>
+                    <!-- Gestion du recadrage d'image -->
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Image :</label>
+                        <input type="file" name="image" id="imageInput" class="form-control">
+                    </div>
 
-     <input type="submit" value="Creer">
-    </form> --}}
+                    <div class="text-center">
+                        <img id="cropperImage" class="img-fluid" style="max-width: 100%; display: none;">
+                    </div>
 
-    <div class="my-3">
-        <p class="h1 text-center">Creer un post</p>
+                    <div class="text-center mt-3">
+                        <button type="button" id="saveCroppedImageBtn" class="btn btn-warning">Recadrer & Enregistrer</button>
+                    </div>
+
+                    <input type="hidden" name="cropped_image" id="croppedImageInput">
+
+                    <div class="mb-3">
+                        <label for="file" class="form-label">Fichier :</label>
+                        <input type="file" name="file" class="form-control">
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ route('postList') }}" class="btn btn-secondary">Annuler</a>
+                        <button type="submit" id="submitPostBtn" class="btn btn-primary">Créer le post</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-    
-    <div class="container mt-4">
-        {{-- Bonne pratique --}}
-        <form action="{{ route('storePost') }}" method="POST" enctype="multipart/form-data" class="card p-4">
-            
-            @csrf {{-- CSRF ?? --}}
-            
-            <!--
-            Le token @csrf (Cross-Site Request Forgery) est utilisé pour protéger l'application
-            contre les attaques CSRF. Ces attaques se produisent lorsqu'un utilisateur authentifié
-            sur un site est amené à effectuer une requête non désirée depuis une autre source,
-            exploitant sa session en cours.
-    
-            Exemple d'une attaque CSRF :
-            Supposons qu'un utilisateur est connecté à son compte sur cette application (exemple : un compte bancaire).
-    
-            Si un attaquant le pousse à visiter un site malveillant contenant un formulaire caché
-            qui fait une requête POST vers ton application (par exemple, pour transférer de l'argent),
-            l'application exécutera cette requête en utilisant la session authentifiée de l'utilisateur.
-            L'utilisateur, sans le savoir, aura effectué une transaction.
-    
-            Le token CSRF empêche ce genre d'attaque. Laravel génère automatiquement un token CSRF
-            unique pour chaque session utilisateur et l'inclut dans les formulaires. Lorsqu'une requête
-            POST, PUT ou DELETE est effectuée, Laravel vérifie que ce token correspond à celui stocké
-            dans la session. Si le token est absent ou ne correspond pas, la requête est rejetée.
-    
-            En résumé : @csrf assure que seules les requêtes valides provenant de l'application elle-même
-            peuvent être exécutées, protégeant ainsi les utilisateurs contre des requêtes non intentionnelles.
-    
-            Vulnérabilité expliquée par l'OWASP : https://owasp.org/www-community/attacks/csrf
-            -->
-    
-            <div class="mb-3">
-                <label for="title" class="form-label">Titre :</label>
-                <input type="text" name="title" class="form-control" placeholder="Titre" value="{{ old('title') }}">
-                {{-- old(...) Permet de récupérer la dernière valeur saisie si la validation a échoué --}}
-                @error('title') <div class="text-danger">{{ $message }}</div> @enderror
-            </div>
-            
-            <div class="mb-3">
-                <label for="content" class="form-label">Contenu :</label>
-                <textarea name="content" class="form-control" placeholder="Contenu">{{ old('content') }}</textarea>
-                @error('content') <div class="text-danger">{{ $message }}</div> @enderror
-            </div>
-    
-            <div class="mb-3">
-                <label for="author" class="form-label">Auteur :</label>
-                <input type="text" name="author" class="form-control" placeholder="Auteur" value="{{ old('author') }}">
-                @error('author') <div class="text-danger">{{ $message }}</div> @enderror
-            </div>
-    
-            <div class="mb-3">
-                <label for="value" class="form-label">Valeur :</label>
-                <input type="number" name="value" class="form-control" placeholder="Valeur (0-5)" value="{{ old('value') }}" min="0" max="5">
-                @error('value') <div class="text-danger">{{ $message }}</div> @enderror
-            </div>
-    
-            <div class="mb-3">
-                <label for="image" class="form-label">Image :</label>
-                <input type="file" name="image" class="form-control">
-                @error('image') <div class="text-danger">{{ $message }}</div> @enderror
-            </div>
-    
-            <div class="mb-3">
-                <label for="file" class="form-label">Fichier :</label>
-                <input type="file" name="file" class="form-control">
-                @error('file') <div class="text-danger">{{ $message }}</div> @enderror
-            </div>
-    
-            <button type="submit" class="btn btn-primary">Créer</button>
-        </form>
-    </div>
-    
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            let cropper;
+            const imageInput = document.getElementById('imageInput');
+            const cropperImage = document.getElementById('cropperImage');
+            const saveCroppedImageBtn = document.getElementById('saveCroppedImageBtn');
+            const croppedImageInput = document.getElementById('croppedImageInput');
+            const contentInput = document.getElementById('content');
+            const contentWarning = document.getElementById('contentWarning');
+            const postForm = document.getElementById('postForm');
+
+            // Vérification du contenu du texte avec SightEngine
+            contentInput.addEventListener('input', function () {
+                fetch('https://api.sightengine.com/1.0/text/check.json', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        'text': contentInput.value,
+                        'lang': 'fr',
+                        'mode': 'standard',
+                        'api_user': '{{ env("SIGHTENGINE_USER") }}',
+                        'api_secret': '{{ env("SIGHTENGINE_SECRET") }}'
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.profanity && data.profanity.matches.length > 0) {
+                        contentWarning.style.display = 'block';
+                    } else {
+                        contentWarning.style.display = 'none';
+                    }
+                });
+            });
+
+            // Détecte le changement d'image et affiche Cropper.js
+            imageInput.addEventListener('change', function (event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        cropperImage.src = e.target.result;
+                        cropperImage.style.display = 'block';
+
+                        if (cropper) {
+                            cropper.destroy();
+                        }
+
+                        cropper = new Cropper(cropperImage, {
+                            aspectRatio: 16 / 9,
+                            viewMode: 2,
+                            autoCropArea: 1,
+                        });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Enregistrer l'image recadrée
+            saveCroppedImageBtn.addEventListener('click', function () {
+                if (cropper) {
+                    const croppedCanvas = cropper.getCroppedCanvas({
+                        width: 800,
+                        height: 450,
+                    });
+
+                    croppedImageInput.value = croppedCanvas.toDataURL('image/jpeg');
+
+                    alert('L’image a été recadrée.');
+                }
+            });
+
+            // Éviter l'envoi en GET et utiliser un fetch() en POST
+            postForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Empêcher la soumission classique
+
+                fetch("{{ route('storePost') }}", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body:
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Post créé avec succès !');
+                        window.location.href = "{{ route('postList') }}";
+                    } else {
+                        alert('Erreur lors de la création du post.');
+                    }
+                })
+                .catch(error => console.error('Erreur:', error));
+            });
+
+        });
+    </script>
 
 </body>
 </html>

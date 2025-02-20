@@ -187,3 +187,28 @@ Pour linker le dossier laravel 'public' depuis l'extérieur (et eviter les erreu
 `php artisan storage:link`
 
 ----------------------------------------------------------------
+
+EDITION D'IMAGE
+
+La librairie **PHP Intervention Image** : 
+
+Installer la librairie Intervention avec : `composer require intervention/image`
+Ajouter la lib dans la config (`config/app.php`) dans le tableau des alias (voir code)
+
+```
+    'aliases' => [
+        'Image' => Intervention\Image\Facades\Image::class,
+    ],
+```
+
+Et ensuite faire un : `php artisan config:clear`
+
+- La librairie **Cropper.js** :
+
+A appeler via CDN :
+
+```
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+```
+
