@@ -165,6 +165,8 @@ public function createNewPost() {
 
         Storage::disk('public')->makeDirectory("posts/{$userFolder}");
 
+        /* ---- MODERATION TEXT (BACKEND) --- */ 
+
         /* --- Vérification du texte SightEngine --- */
 
         // $response = Http::withOptions(['verify' => false])->post('https://api.sightengine.com/1.0/text/check.json', [
@@ -201,7 +203,7 @@ public function createNewPost() {
             // VERIFICATION FAITES EN AMONT JS
             $imagePath = $request->file('image')->store("posts/{$userFolder}", 'public');
                 
-            /* ---- MODERATION BACK-END --- */ 
+            /* ---- MODERATION IMAGE (BACKEND) --- */ 
 
             // $tempPath = $request->file('image')->store("temp", 'public');
             // $imageUrl = asset("storage/$tempPath");
@@ -223,20 +225,23 @@ public function createNewPost() {
         }
 
         /* --- Gestion des fichiers --- */
-        $filePath = $request->hasFile('file') ? $request->file('file')->store("posts/{$userFolder}", 'public') : null;
+
+        if($request->hasFile('file')) {
+            $filePath = $request->file('file')->store("posts/{$userFolder}", 'public');
+        }
 
         /* --- Création du post --- */
         Posts::create([
             'title' => $validatedData['title'],
             'content' => $validatedData['content'],
-            'author' => $validatedData['author'],
+            'author' => $user->name,
             'value' => $validatedData['value'],
             'image' => $imagePath,
             'file' => $filePath,
             'user_folder' => $userFolder,
         ]);
 
-        return redirect()->route('postList')->with('success', 'Post créé avec succès !');
+        return response()->json(['success' => true, 'message' => 'Post créé avec succès !']);
     }
 
 

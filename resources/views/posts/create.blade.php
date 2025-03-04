@@ -65,9 +65,8 @@
     </div>
 
     <script>
-
         document.addEventListener('DOMContentLoaded', function () {
-
+            
             let cropper;
             const imageInput = document.getElementById('imageInput');
             const cropperImage = document.getElementById('cropperImage');
@@ -76,14 +75,17 @@
             const contentInput = document.getElementById('content');
             const contentWarning = document.getElementById('contentWarning');
             const postForm = document.getElementById('postForm');
-
-            // Vérification du contenu du texte avec SightEngine
+    
+            if (!postForm) {
+                console.error(" Formulaire introuvable !");
+                return;
+            }
+    
+            // Vérification du contenu texte SightEngine
             contentInput.addEventListener('input', function () {
                 fetch('https://api.sightengine.com/1.0/text/check.json', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: new URLSearchParams({
                         'text': contentInput.value,
                         'lang': 'fr',
@@ -99,22 +101,23 @@
                     } else {
                         contentWarning.style.display = 'none';
                     }
-                });
+                })
+                .catch(error => console.error(" Erreur API SightEngine:", error));
             });
-
-            // Détecte le changement d'image et affiche Cropper.js
-            imageInput.addEventListener('change', function (event) {
-                const file = event.target.files[0];
+    
+            // Affichage de l'image pour recadrage
+            imageInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         cropperImage.src = e.target.result;
                         cropperImage.style.display = 'block';
-
+    
                         if (cropper) {
                             cropper.destroy();
                         }
-
+    
                         cropper = new Cropper(cropperImage, {
                             aspectRatio: 16 / 9,
                             viewMode: 2,
@@ -124,46 +127,76 @@
                     reader.readAsDataURL(file);
                 }
             });
-
-            // Enregistrer l'image recadrée
+    
+            // Recadrage image
             saveCroppedImageBtn.addEventListener('click', function () {
                 if (cropper) {
                     const croppedCanvas = cropper.getCroppedCanvas({
                         width: 800,
                         height: 450,
                     });
-
+    
                     croppedImageInput.value = croppedCanvas.toDataURL('image/jpeg');
-
+    
                     alert('L’image a été recadrée.');
                 }
             });
+    
+            // Envoi du formulaire en Fetch 
+            postForm.addEventListener('submit', function (e) {
 
-            // Éviter l'envoi en GET et utiliser un fetch() en POST
-            postForm.addEventListener('submit', function (event) {
-                event.preventDefault(); // Empêcher la soumission classique
-
+                e.preventDefault();
+    
+                const formData = new FormData(postForm);
+                formData.append('_token', '{{ csrf_token() }}');
+    
+                console.log("Données envoyées :", [...formData.entries()]);
+    
                 fetch("{{ route('storePost') }}", {
                     method: "POST",
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body:
+                    body: formData
                 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Post créé avec succès !');
-                        window.location.href = "{{ route('postList') }}";
+                .then(async response => {
+
+                    console.log("HTTP Status:", response.status);
+    
+                    const contentType = response.headers.get("content-type");
+                    console.log("Content-Type:", contentType);
+    
+                    if (!response.ok) {
+                        throw new Error(`Erreur HTTP: ${response.status}`);
+                    }
+    
+                    if (contentType && contentType.includes("application/json")) {
+                        return response.json();
                     } else {
-                        alert('Erreur lors de la création du post.');
+                        const textResponse = await response.text();
+                        console.log("Réponse serveur (HTML probable):", textResponse);
+                        throw new Error("Le serveur n'a pas retourné du JSON.");
                     }
                 })
-                .catch(error => console.error('Erreur:', error));
-            });
+                .then(data => {
 
+                    console.log("Réponse JSON:", data);
+
+                    if (data.success) {
+
+                        alert('Post créé avec succès !');
+                        window.location.href = "{{ route('postList') }}";
+
+                    } else {
+
+                        alert(' Erreur lors de la création du post.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur Fetch:', error);
+                    alert("Une erreur s'est produite. Vérifie la console pour plus de détails.");
+                });
+            });
         });
     </script>
-
+    
+    
 </body>
 </html>
