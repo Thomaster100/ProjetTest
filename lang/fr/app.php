@@ -3,6 +3,7 @@
 return [
     'home' => [
         'welcome' => 'Bienvenue',
+        'year' => ':current_year',
         'connexion' => 'Connexion',
         'email' => 'Votre email',
         'password' => 'Votre mot de passe',

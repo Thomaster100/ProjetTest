@@ -31,7 +31,7 @@
 
         @include('lang.switcher')
 
-        <p class="h1 mb-5 text-center">Postlist - {{ __('app.home.connexion') }}</p>
+        <p class="h1 mb-5 text-center">Postlist - {{ __('app.home.connexion') }} - {{ __('app.home.year', ['current_year' => '2025']) }}</p>
         <form action="{{ url('/login') }}" method="POST">
             @csrf
             <div class="mb-3">
