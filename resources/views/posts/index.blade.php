@@ -9,6 +9,8 @@
 </head>
 <body>
 
+    @include('lang.switcher')
+
     <div class="container 
                 d-flex 
                 flex-column 

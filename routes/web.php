@@ -12,10 +12,31 @@ use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ModeratorController;
 use App\Http\Controllers\EditorController;
+use Illuminate\Support\Facades\App;
+use Illuminate\Http\Request;
 
 // ROUTE DE BASE DE LARAVEL
 Route::get('/', function () {
     return redirect()->route('login');
+});
+
+Route::get('/language/{locale}', function ($locale, Request $request) {
+
+    if (!in_array($locale, array_values(config('app.all_locales')))) {
+        abort(400);
+    }
+
+    Session::put('app_locale', $locale);
+    Session::save();
+
+    return redirect()->back();
+
+})->name('change.locale');
+
+// ROUTE HELPER POUR FLUSH LA SESSION
+Route::get('/clear-session', function() {
+    session()->flush();
+    return "Session cleared!";
 });
 
 // ROUTE DASHBOARD ADMIN

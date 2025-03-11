@@ -187,3 +187,61 @@ Pour linker le dossier laravel 'public' depuis l'extérieur (et eviter les erreu
 `php artisan storage:link`
 
 ----------------------------------------------------------------
+
+Traductions (Localization)
+
+Doc : `https://laravel.com/docs/11.x/localization`
+
+Creer le répertoire pour les langues : `php artisan lang:publish`
+
+Interpréter les traductions sous cette syntaxe : `echo __('home.welcome');
+`
+Retrouver la locale : `$locale = App::currentLocale();`
+
+Tester la locale : `App::isLocale('fr');`
+
+Définir une locale : ` App::setLocale('en');`, ` App::setLocale($locale);`
+
+Interpreter des variables
+
+Paramètres pour les variables : `'welcome' => 'Welcome, :name'` (notez bien les deux points avant la variable name)
+Interpréter des variables : `echo __('messages.welcome', ['name' => 'dayle']);`
+
+(optionnel) Une classe `Pluralizer` existe aussi pour mettre les phrases au pluriel
+
+Exemple pour le JSON : `'notification' => 'Vous avez une notification|Vous avez plusieurs notifications',`
+
+` Pluralizer::useLanguage('french');`
+
+Langages supportés : 
+
+- french
+- norwegian-bokmal
+- portuguese
+- spanish
+- turkish
+
+ETAPES : 
+
+- `php artisan lang:publish (création du dossier)`
+- Créer les fichiers de langues (fr, en…)
+- Créer votre middleware pour gérer le multi
+- Déclarer votre middleware dans `bootstrap/app.php`
+  
+  ```
+    ->withMiddleware(function (Middleware $middleware) {
+	// PREPREND pour pré-charger le middleware
+        $middleware->prepend(Localization::class);
+    })
+  ```
+
+Pour vider le tout : 
+
+`php artisan cache:clear`
+`php artisan config:clear`
+`php artisan view:clear`
+`php artisan route:clear`
+`php artisan optimize:clear`
+
+
+----------------------------------------------------------------
