@@ -10,6 +10,7 @@
 
     {{-- STRATEGIE DE TRADUCTION AVEC LES FICHIERS PHP --}}
     {{-- POUR LE JSON, - voir exemple dans le projet actuel du dossier lang-JSON) --}}
+    {{-- A placer dans le dossier /lang apres la commande du lang publish --}}
 
         @if (session('success'))
             <div class="alert alert-success mt-4">
