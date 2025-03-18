@@ -81,9 +81,4 @@ class MapController extends Controller
         return response()->json($markers);
     }
 
-   public function printPostmanDatas() {
-        return response()->json(['POSTMAN-OK']);
-   }
-
-
 }

@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'home' => [
         'welcome' => 'Welkom',
         'email' => 'Uw e-mail',
@@ -16,15 +17,18 @@ return [
     ],
 
     'general' => [
+        'loading' => 'laden',
         'read' => 'Bekijken',
         'create' => 'Toevoegen',
         'update' => 'Bijwerken',
         'delete' => 'Verwijderen',
         'save' => 'Opslaan',
         'cancel' => 'Annuleren',
+        'logout' => 'uitloggen'
     ],
 
     'posts' => [
+        'a-post' => 'een bericht',
         'postlist' => 'Postlijst',
         'post-title' => 'Posttitel',
         'post-content' => 'Inhoud',
@@ -32,5 +36,6 @@ return [
         'post-rating' => 'Beoordeling',
         'post-image' => 'Afbeelding:',
         'post-file' => 'Bestand:',
+        'placeholder-search' => 'Zoeken op titel of auteur...' ,
     ],
 ];

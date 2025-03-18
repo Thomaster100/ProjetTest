@@ -20,23 +20,38 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/language/{locale}', function ($locale, Request $request) {
+Route::middleware(['web'])->get('/language/{locale}', function ($locale, Request $request) {
 
     if (!in_array($locale, array_values(config('app.all_locales')))) {
         abort(400);
     }
 
+    App::setlocale($locale); // 'fr', 'en'
     Session::put('app_locale', $locale);
     Session::save();
-
+    
     return redirect()->back();
 
 })->name('change.locale');
 
 // ROUTE HELPER POUR FLUSH LA SESSION
-Route::get('/clear-session', function() {
+Route::middleware(['web'])->get('/clear-session', function() {
     session()->flush();
     return "Session cleared!";
+});
+
+// ROUTE HELPER POUR PRINT LES DONNEES DE SESSION
+Route::middleware(['web'])->get('/debug-session', function () {
+
+    return response()->json([
+        'session_exists' => session()->has('app_locale'),
+        'session_locale' => session('app_locale'),
+        'app_locale' => App::getLocale(),
+        'config_locale' => config('app.locale'),
+        'session_data' => session()->all(), 
+        'cookie' => request()->cookie(config('session.cookie')),
+        'translation' => __('home.connexion'),
+    ]);
 });
 
 // ROUTE DASHBOARD ADMIN
@@ -76,9 +91,7 @@ Route::post('/storePost' , [PostsController::class, 'store'])->name('storePost')
 // EDIT
 
 // Afficher le formulaire d'édition
-
 Route::get('/posts/{post}/edit', [PostsController::class, 'edit'])->name('posts.edit');
-
 Route::get('/posts/{id}/edit', [PostsController::class, 'editById'])->name('posts.edit.byId');
 
 
@@ -186,9 +199,6 @@ Route::get('/get-coordinates', [MapController::class, 'getCoordinates'])->name('
 Route::get('/map/multiple-markers', [MapController::class, 'showMultipleMarkers'])->name('map.multiple_markers');
 
 Route::get('/map/get-markers', [MapController::class, 'getMarkers'])->name('map.get_markers');
-
-// Route postman de test
-Route::get('/postman-test', [MapController::class, 'printPostmanDatas'])->name('/postman-test');
 
 // Routes accessibles uniquement aux administrateurs
 Route::middleware(['auth', PermissionMiddleware::class . ':manage-users'])->group(function () {

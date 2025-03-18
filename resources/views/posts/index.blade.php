@@ -9,14 +9,16 @@
 </head>
 <body>
 
-    @include('lang.switcher')
-
+    <div class="my-4">
+        @include('lang.switcher')
+    </div>
+   
     <div class="container 
                 d-flex 
                 flex-column 
                 justify-content-center 
                 align-items-center">
-        <p class="h1 text-center my-3">Liste des Posts</p>
+        <p class="h1 text-center my-3">{{__('app.posts.postlist')}}</p>
 
  <!-- searchBar -->
  <div class="container my-4">
@@ -26,14 +28,14 @@
             type="text" 
             id="search-bar" 
             class="form-control" 
-            placeholder="Rechercher par titre ou auteur...">
+            placeholder={{__('app.posts.placeholder-search')}}>
         </div>
     </div>
  </div>
 
  <div class="my-3">
     <a href="{{ route('createPost') }}" class="btn btn-success">
-        <i class="bi bi-plus-circle"></i> Ajouter un post
+        <i class="bi bi-plus-circle"></i> {{ __('app.general.create') . ' ' .  __('app.posts.a-post')   }}
     </a>    
  </div>
 
@@ -45,7 +47,7 @@
     <div class="row">
         <form action="{{ route('logout') }}" method="POST" style="display: inline;">
             @csrf
-            <button type="submit" class="btn btn-danger">Déconnexion</button>
+            <button type="submit" class="btn btn-danger">{{__('app.general.logout')}}</button>
         </form>
     </div>
 </div>

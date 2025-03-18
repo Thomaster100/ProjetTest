@@ -32,7 +32,15 @@
 
         @include('lang.switcher')
 
-        <p class="h1 mb-5 text-center">Postlist - {{ __('app.home.connexion') }} - {{ __('app.home.year', ['current_year' => '2025']) }}</p>
+        {{-- STRATEGIE PHP --}}
+        {{-- nom du fichier + les clé pour accéder a la traduction --}}
+
+        {{-- <p class="h1 mb-5 text-center">Postlist - {{ __('app.home.connexion') }} - {{ __('app.home.year', ['current_year' => '2025']) }}</p>  --}}
+
+        {{-- STRATEGIE JSON --}}
+        {{-- Juste  les clés pour accéder a la traduction --}}
+        <p class="h1 mb-5 text-center">Postlist - {{ __('app.home.connexion') }} - {{ __('app.home.year', ['current_year' => date("Y")]) }}</p>
+
         <form action="{{ url('/login') }}" method="POST">
             @csrf
             <div class="mb-3">

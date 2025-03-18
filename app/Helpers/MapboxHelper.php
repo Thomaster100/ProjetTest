@@ -28,6 +28,6 @@ class MapboxHelper {
             'latitude' => $data['features'][0]['geometry']['coordinates'][1],
             'full_address' => $data['features'][0]['place_name'],
         ];
-        
+             
     }
 }

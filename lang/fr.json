@@ -2,6 +2,7 @@
     
     "home" : {
         "welcome" : "Bienvenue",
+        "year" : ":current_year",
         "connexion" : "Se connecter",
         "email": "Votre email",
         "password": "Votre mot de passe",

@@ -19,6 +19,17 @@ class Localization {
         $locale = Session::get('app_locale', config('app.locale'));
 
         App::setLocale($locale);
+        config(['app.locale' => $locale]);
+
+        // DD POUR AFFICHER LES INFOS MIDDLEWARE
+
+        // dd([
+        //     'middleware_started' => true,
+        //     'session_locale' => $locale,
+        //     'app_locale' => App::getLocale(),
+        //     'config_locale' => config('app.locale'),
+        //     'session_datas' => session()->all()
+        // ]);
 
         return $next($request);
     }

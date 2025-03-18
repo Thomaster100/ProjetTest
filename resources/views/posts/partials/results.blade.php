@@ -8,7 +8,7 @@
             {{-- SPINNER --}}
             <div id="loading-spinner" class="text-center my-4" style="display: none;">
                 <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Chargement...</span>
+                    <span class="visually-hidden">{{__('app.general.loading')}}</span>
                 </div>
             </div>
 
@@ -39,9 +39,9 @@
                             <div class="d-flex justify-content-end">
                                 <!-- Bouton Modifier -->
                                 @if(auth()->user()->hasRole('admin') || auth()->user()->hasRole('editor'))
-                                    <a href="{{ route('posts.edit', $post) }}" class="btn btn-secondary me-2">Modifier</a>
+                                    <a href="{{ route('posts.edit', $post) }}" class="btn btn-secondary me-2">{{__('app.general.update')}}</a>
                                 @else
-                                    <a href="#" class="btn btn-secondary me-2 disabled" aria-disabled="true">Modifier</a>
+                                    <a href="#" class="btn btn-secondary me-2 disabled" aria-disabled="true">{{__('app.general.update')}}</a>
                                 @endif
 
                                 <!-- Bouton Supprimer -->
@@ -52,7 +52,7 @@
                                         <button class="btn btn-danger"
                                             type="submit"
                                             onclick="return confirm('Voulez-vous vraiment supprimer ce post ?');"
-                                        >Supprimer</button>
+                                        >{{__('app.general.delete')}}</button>
                                     </form>
                                 @else
                                     <button class="btn btn-danger disabled" aria-disabled="true">Supprimer</button>

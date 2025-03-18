@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.2",
         "koossaayy/laravel-mapbox": "^0.4.8",
+        "laravel-lang/json-fallback": "^2.2",
         "laravel/framework": "^11.9",
         "laravel/socialite": "^5.17",
         "laravel/tinker": "^2.9"
@@ -27,7 +28,8 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "files": [
-            "app/Helpers/MapboxHelper.php"
+            "app/Helpers/MapboxHelper.php",
+            "app/Helpers/TranslationHelper.php"
         ]
     },
     "autoload-dev": {

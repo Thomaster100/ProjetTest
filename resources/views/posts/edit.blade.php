@@ -8,8 +8,13 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
+
+    <div class="my-4">
+        @include('lang.switcher')
+    </div>
+
     <div class="container mt-5">
-        <p class="h2 text-center mb-4">Modifier le Post</p>
+        <p class="h2 text-center mb-4">{{__('app.general.update') . ' ' . __('app.posts.a-post')}}</p>
     
         <div class="card">
             <div class="card-body">
@@ -22,7 +27,7 @@
                     <!-- Champ pour le titre -->
                     <!-- Ce champ utilise directement le modèle de données grâce au binding -->
                     <div class="mb-3">
-                        <label for="title" class="form-label">Titre du Post</label>
+                        <label for="title" class="form-label">{{__('app.posts.post-title')}}</label>
                         <input 
                             type="text" 
                             name="title" 
@@ -35,7 +40,7 @@
                     <!-- Champ pour le contenu -->
                     <!-- Ce champ est prérempli avec le contenu du post existant -->
                     <div class="mb-3">
-                        <label for="content" class="form-label">Contenu</label>
+                        <label for="content" class="form-label">{{__('app.posts.post-content')}}</label>
                         <textarea 
                             name="content" 
                             id="content" 
@@ -47,7 +52,7 @@
                     <!-- Champ pour l'auteur -->
                     <!-- L'auteur est un champ texte modifiable directement -->
                     <div class="mb-3">
-                        <label for="author" class="form-label">Auteur</label>
+                        <label for="author" class="form-label">{{__('app.posts.post-author')}}</label>
                         <input 
                             type="text" 
                             name="author" 
@@ -60,7 +65,7 @@
                     <!-- Champ pour la valeur -->
                     <!-- Ce champ est prérempli avec la valeur actuelle enregistrée en base de données -->
                     <div class="mb-3">
-                        <label for="value" class="form-label">Valeur</label>
+                        <label for="value" class="form-label">{{__('app.posts.post-rating')}}</label>
                         <input 
                             type="text" 
                             name="value" 
@@ -71,7 +76,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="image" class="form-label">Image :</label>
+                        <label for="image" class="form-label">{{__('app.posts.post-image')}} </label>
                     
                         <!-- Affichage de l'image actuelle -->
                         @if($post->image)
@@ -86,7 +91,7 @@
                     </div>
                     
                     <div class="mb-3">
-                        <label for="file" class="form-label">Fichier :</label>
+                        <label for="file" class="form-label">{{__('app.posts.post-file')}} </label>
                     
                         <!-- Affichage du fichier actuel -->
                         @if($post->file)
@@ -106,8 +111,8 @@
                     <!-- Bouton Annuler : revient à la liste des posts -->
                     <!-- Bouton Enregistrer : valide et met à jour le post avec son ID -->
                     <div class="d-flex justify-content-between">
-                        <a href="{{ route('postList') }}" class="btn btn-secondary">Annuler</a>
-                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        <a href="{{ route('postList') }}" class="btn btn-secondary">{{__('app.general.cancel')}}</a>
+                        <button type="submit" class="btn btn-primary">{{__('app.general.save')}}</button>
                     </div>
                 </form>
             </div>

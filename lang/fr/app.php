@@ -1,6 +1,14 @@
 <?php
 
 return [
+
+    'menu' => [
+    
+        'homepage' => 'Accueil',
+        'about' => 'A propos',
+        'contact-me' => 'contactez-moi',
+    ],
+
     'home' => [
         'welcome' => 'Bienvenue',
         'year' => ':current_year',
@@ -18,15 +26,18 @@ return [
     ],
 
     'general' => [
+        'loading' => 'chargement',
         'read' => 'Voir',
         'create' => 'Ajouter',
         'update' => 'Mettre à jour',
         'delete' => 'Supprimer',
         'save' => 'Enregistrer',
         'cancel' => 'Annuler',
+        'logout' => 'Deconnexion'
     ],
 
     'posts' => [
+        'a-post' => 'un post',
         'postlist' => 'Liste des posts',
         'post-title' => 'Titre du post',
         'post-content' => 'Contenu',
@@ -34,5 +45,6 @@ return [
         'post-rating' => 'Note',
         'post-image' => 'Image : ',
         'post-file' => 'Fichier : ',
+        'placeholder-search' => 'Rechercher par titre ou auteur'
     ],
 ];

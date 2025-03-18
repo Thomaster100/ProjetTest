@@ -16,15 +16,18 @@ return [
     ],
 
     'general' => [
+        'loading' => 'loading',
         'read' => 'View',
         'create' => 'Add',
         'update' => 'Update',
         'delete' => 'Delete',
         'save' => 'Save',
         'cancel' => 'Cancel',
+        'logout' => 'logout'
     ],
 
     'posts' => [
+        'a-post' => 'a post',
         'postlist' => 'Post list',
         'post-title' => 'Post title',
         'post-content' => 'Content',
@@ -32,5 +35,6 @@ return [
         'post-rating' => 'Rating',
         'post-image' => 'Image:',
         'post-file' => 'File:',
+        'placeholder-search' => 'Search by title or author...'
     ],
 ];
