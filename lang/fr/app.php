@@ -1,14 +1,7 @@
 <?php
 
 return [
-
-    'menu' => [
     
-        'homepage' => 'Accueil',
-        'about' => 'A propos',
-        'contact-me' => 'contactez-moi',
-    ],
-
     'home' => [
         'welcome' => 'Bienvenue',
         'year' => ':current_year',

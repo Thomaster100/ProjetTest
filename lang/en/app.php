@@ -1,8 +1,11 @@
 <?php
 
 return [
+    
     'home' => [
         'welcome' => 'Welcome',
+        'year' => ':current_year',
+        'connexion' => 'Connection',
         'email' => 'Your email',
         'password' => 'Your password',
         'login-google' => 'Sign in with Google',

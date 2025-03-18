@@ -5,6 +5,8 @@ return [
     'home' => [
         'welcome' => 'Welkom',
         'email' => 'Uw e-mail',
+        'year' => ':current_year',
+        'connexion' => 'Aansluiting',
         'password' => 'Uw wachtwoord',
         'login-google' => 'Inloggen met Google',
         'login-facebook' => 'Inloggen met Facebook',
