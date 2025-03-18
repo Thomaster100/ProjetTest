@@ -35,6 +35,9 @@ return [
         'post-rating' => 'Rating',
         'post-image' => 'Image:',
         'post-file' => 'File:',
+        'choose-image' => 'Choose an image',
+        'choose-file' => 'Choose a file',
+        'download-current-file' => 'Download the current file',
         'placeholder-search' => 'Search by title or author...'
     ],
 ];

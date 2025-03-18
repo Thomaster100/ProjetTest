@@ -45,6 +45,9 @@ return [
         'post-rating' => 'Note',
         'post-image' => 'Image : ',
         'post-file' => 'Fichier : ',
+        'choose-image' => 'Choisir une image',
+        'choose-file' => 'Choisir un fichier',
+        'download-current-file' => 'Télécharger le fichier actuel',
         'placeholder-search' => 'Rechercher par titre ou auteur'
     ],
 ];

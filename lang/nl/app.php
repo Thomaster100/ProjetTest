@@ -36,6 +36,9 @@ return [
         'post-rating' => 'Beoordeling',
         'post-image' => 'Afbeelding:',
         'post-file' => 'Bestand:',
+        'choose-image' => 'Kies een afbeelding',
+        'choose-file' => 'Kies een bestand',
+        'download-current-file' => 'Het huidige bestand downloaden',
         'placeholder-search' => 'Zoeken op titel of auteur...' ,
     ],
 ];

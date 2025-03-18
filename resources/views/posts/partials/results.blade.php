@@ -31,7 +31,7 @@
                                 @if($post->file)
                                     <a href="{{ asset('storage/posts/' . $post->user_folder . '/' . basename($post->file)) }}" 
                                        class="btn btn-primary" download>
-                                        Télécharger le fichier
+                                       {{__('app.posts.download-current-file')}}
                                     </a>
                                 @endif
                             </div>

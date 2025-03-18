@@ -85,9 +85,11 @@
                                      alt="Image du post" class="img-fluid rounded" style="max-width: 200px;">
                             </div>
                         @endif
-                    
-                        <input type="file" name="image" class="form-control">
-                        @error('image') <div class="text-danger">{{ $message }}</div> @enderror
+
+                        <input type="file" name="image" id="image" class="form-control @error('image') is-invalid @enderror" accept="image/*" hidden>
+                        <label class="btn btn-primary" for="image">{{__('app.posts.choose-image')}}</label>
+                        <span id="selectedImageName" class="ms-2"></span>
+
                     </div>
                     
                     <div class="mb-3">
@@ -98,13 +100,18 @@
                             <div class="mb-2">
                                 <a href="{{ asset('storage/posts/' . $post->user_folder . '/' . basename($post->file)) }}" 
                                    class="btn btn-outline-primary" download>
-                                    Télécharger le fichier actuel
+                                   {{__('app.posts.download-current-file')}}
                                 </a>
                             </div>
                         @endif
                     
-                        <input type="file" name="file" class="form-control">
-                        @error('file') <div class="text-danger">{{ $message }}</div> @enderror
+                        {{-- <input type="file" name="file" class="form-control file-input" hidden>
+                        @error('file') <div class="text-danger">{{ $message }}</div> @enderror --}}
+
+                        <input type="file" name="file" id="file" class="form-control @error('file') is-invalid @enderror" hidden>
+                        <label class="btn btn-primary" for="file">{{__('app.posts.choose-file')}}</label>
+                        <span id="selectedFileName" class="ms-2"></span>
+
                     </div>
     
                     <!-- Boutons pour annuler ou enregistrer -->
