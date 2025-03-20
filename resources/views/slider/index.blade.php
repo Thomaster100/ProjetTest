@@ -7,7 +7,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        /* Container du slider */
+
         #slider-container {
             max-width: 600px;
             height: 300px;
@@ -19,7 +19,7 @@
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
         }
         
-        /* Images en ligne (AFFICHAGE CORRIGÉ : 1 IMAGE À LA FOIS) */
+    
         .slider {
             display: flex;
             width: 100%;
@@ -27,13 +27,12 @@
         }
 
         .slider img {
-            width: 100%; /* Ajuste à la largeur du conteneur */
-            height: 100%; /* Ajuste à la hauteur du conteneur */
-            object-fit: cover; /* Remplit le conteneur sans être déformé */
-            flex: 0 0 100%; /* Une seule image visible à la fois */
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            flex: 0 0 100%; 
         }
 
-        /* Boutons de navigation */
         .slider-btn {
             position: absolute;
             top: 50%;
@@ -47,8 +46,14 @@
             border-radius: 50%;
         }
 
-        .prev { left: 10px; }
-        .next { right: 10px; }
+        .prev { 
+            left: 10px; 
+        }
+
+        .next { 
+            right: 10px; 
+        }
+
     </style>
 </head>
 <body>
@@ -56,7 +61,7 @@
     <div class="container mt-5">
         <h1 class="text-center">Gestion du Slider</h1>
 
-        <!-- Slider avec boutons de navigation -->
+
         <div id="slider-container" class="my-4">
             <button class="slider-btn prev" onclick="prevSlide()">❮</button>
             <div class="slider" id="slider">
@@ -67,7 +72,7 @@
             <button class="slider-btn next" onclick="nextSlide()">❯</button>
         </div>
 
-        <!-- Formulaire d'upload -->
+   
         <div class="card p-4">
             <h3>Ajouter une image</h3>
             <form id="uploadForm" enctype="multipart/form-data">
@@ -77,7 +82,6 @@
             </form>
         </div>
 
-        <!-- Liste des images existantes -->
         <h3 class="mt-4">Images actuelles</h3>
         <div id="imageList" class="d-flex flex-wrap">
             @foreach ($images as $image)
@@ -90,11 +94,13 @@
 
     </div>
 
-    <!-- JAVASCRIPT POUR LE SLIDER -->
+
     <script>
+
         let currentIndex = 0;
 
         function updateSlider() {
+
             const slider = document.getElementById("slider");
             const slides = document.querySelectorAll(".slider img");
             const totalSlides = slides.length;
@@ -102,7 +108,6 @@
             if (currentIndex >= totalSlides) currentIndex = 0;
             if (currentIndex < 0) currentIndex = totalSlides - 1;
 
-            // Ajustement du translateX pour ne montrer qu'une seule image à la fois
             slider.style.transform = `translateX(-${currentIndex * 100}%)`;
         }
 
@@ -116,13 +121,12 @@
             updateSlider();
         }
 
-        // Auto-défilement toutes les 5s
         setInterval(() => {
             nextSlide();
         }, 5000);
 
-        // Gestion du formulaire d'upload
         document.addEventListener("DOMContentLoaded", function () {
+
             const form = document.getElementById("uploadForm");
             form.addEventListener("submit", function (e) {
                 e.preventDefault();
