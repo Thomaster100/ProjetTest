@@ -14,6 +14,7 @@ use App\Http\Controllers\ModeratorController;
 use App\Http\Controllers\EditorController;
 use Illuminate\Support\Facades\App;
 use Illuminate\Http\Request;
+use App\Http\Controllers\SliderController;
 
 // ROUTE DE BASE DE LARAVEL
 Route::get('/', function () {
@@ -53,6 +54,11 @@ Route::middleware(['web'])->get('/debug-session', function () {
         'translation' => __('home.connexion'),
     ]);
 });
+
+// ROUTE SLIDER
+Route::get('/slider', [SliderController::class, 'index'])->name('slider.index');
+Route::post('/slider/upload', [SliderController::class, 'upload'])->name('slider.upload');
+Route::delete('/slider/{id}', [SliderController::class, 'delete'])->name('slider.delete');
 
 // ROUTE DASHBOARD ADMIN
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
