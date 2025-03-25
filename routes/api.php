@@ -1,4 +1,4 @@
 <?php
 
-use App\Http\Controllers\PostsController;
-Route::apiResource('posts', PostsController::class);
+use App\Http\Controllers\postsApiController;
+Route::apiResource('posts', postsApiController::class);
