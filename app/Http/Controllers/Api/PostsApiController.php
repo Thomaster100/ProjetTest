@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Posts;
 use Illuminate\Support\Facades\Validator;
 
-class PostsController extends Controller {
+class PostsApiController extends Controller {
 
     public function index() {
 
@@ -76,8 +76,8 @@ class PostsController extends Controller {
         ]);
     }
 
-    public function destroy($id)
-    {
+    public function destroy($id) {
+        
         $post = Posts::find($id);
 
         if (!$post) {

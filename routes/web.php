@@ -207,28 +207,30 @@ Route::get('/map/multiple-markers', [MapController::class, 'showMultipleMarkers'
 Route::get('/map/get-markers', [MapController::class, 'getMarkers'])->name('map.get_markers');
 
 // Routes accessibles uniquement aux administrateurs
-Route::middleware(['auth', PermissionMiddleware::class . ':manage-users'])->group(function () {
-    Route::get('/admin', 'AdminController@index')->name('admin.dashboard');
-});
-Route::middleware(['auth', PermissionMiddleware::class . ':approve-todos'])->group(function () {
-    Route::get('/moderate', 'ModeratorController@index')->name('moderator.dashboard');
-});
-Route::middleware(['auth', PermissionMiddleware::class . ':create-todos'])->group(function () {
-    Route::get('/editor', 'EditorController@index')->name('editor.dashboard');
-});
 
-// Routes pour les modérateurs
-Route::middleware(['auth', 'moderator'])->group(function () {
-    Route::get('/moderator', [ModeratorController::class, 'index'])->name('moderator.index');
-    Route::delete('/moderator/comment/{id}', [ModeratorController::class, 'deleteComment'])->name('moderator.delete_comment');
-    Route::post('/moderator/approve/{id}', [ModeratorController::class, 'approvePost'])->name('moderator.approve_post');
-});
+// Route::middleware(['auth', PermissionMiddleware::class . ':manage-users'])->group(function () {
+//     Route::get('/admin', 'AdminController@index')->name('admin.dashboard');
+// });
 
-// Routes pour les éditeurs
-Route::middleware(['auth', 'editor'])->group(function () {
-    Route::get('/editor', [EditorController::class, 'index'])->name('editor.index');
-    Route::get('/editor/create', [EditorController::class, 'createPost'])->name('editor.create_post');
-    Route::post('/editor/store', [EditorController::class, 'storePost'])->name('editor.store_post');
-    Route::get('/editor/edit/{post}', [EditorController::class, 'editPost'])->name('editor.edit_post');
-    Route::put('/editor/update/{post}', [EditorController::class, 'updatePost'])->name('editor.update_post');
-});
+// Route::middleware(['auth', PermissionMiddleware::class . ':approve-todos'])->group(function () {
+//     Route::get('/moderate', 'ModeratorController@index')->name('moderator.dashboard');
+// });
+// Route::middleware(['auth', PermissionMiddleware::class . ':create-todos'])->group(function () {
+//     Route::get('/editor', 'EditorController@index')->name('editor.dashboard');
+// });
+
+// // Routes pour les modérateurs
+// Route::middleware(['auth', 'moderator'])->group(function () {
+//     Route::get('/moderator', [ModeratorController::class, 'index'])->name('moderator.index');
+//     Route::delete('/moderator/comment/{id}', [ModeratorController::class, 'deleteComment'])->name('moderator.delete_comment');
+//     Route::post('/moderator/approve/{id}', [ModeratorController::class, 'approvePost'])->name('moderator.approve_post');
+// });
+
+// // Routes pour les éditeurs
+// Route::middleware(['auth', 'editor'])->group(function () {
+//     Route::get('/editor', [EditorController::class, 'index'])->name('editor.index');
+//     Route::get('/editor/create', [EditorController::class, 'createPost'])->name('editor.create_post');
+//     Route::post('/editor/store', [EditorController::class, 'storePost'])->name('editor.store_post');
+//     Route::get('/editor/edit/{post}', [EditorController::class, 'editPost'])->name('editor.edit_post');
+//     Route::put('/editor/update/{post}', [EditorController::class, 'updatePost'])->name('editor.update_post');
+// });
