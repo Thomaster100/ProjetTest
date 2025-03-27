@@ -70,6 +70,10 @@
             <a href="{{ route('map.multiple_markers') }}" class="btn btn-success">{{ __('app.home.view-map-pins') }}</a>
         </div>
 
+        <div class="stripe-route-container mt-3">
+            <a href="{{ route('stripe.checkout') }}" class="btn btn-primary"> Simuler paiement Stripe</a>
+        </div>
+
     </div>
         <div class="position-fixed bottom-0 end-0 m-4">
             <a href="{{ route('users.create') }}" class="btn btn-primary btn-lg" title="Ajouter un compte utilisateur">

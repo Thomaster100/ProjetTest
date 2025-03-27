@@ -143,5 +143,6 @@ return [
         ])->replace([
             BaseTranslation::class => JsonTranslation::class,
         ])->toArray(),
-        App\Providers\TranslationServiceProvider::class,
+        // App\Providers\TranslationServiceProvider::class,
+        App\Providers\EventServiceProvider::class,
 ];

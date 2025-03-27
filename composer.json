@@ -10,7 +10,8 @@
         "laravel-lang/json-fallback": "^2.2",
         "laravel/framework": "^11.9",
         "laravel/socialite": "^5.17",
-        "laravel/tinker": "^2.9"
+        "laravel/tinker": "^2.9",
+        "stripe/stripe-php": "^16.6"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.14",

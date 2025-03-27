@@ -38,6 +38,7 @@ return [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT_URI'),
+        
         // Désactive la vérification SSL (problèmes HTTP / HTTPS)
         'guzzle' => [
             'verify' => false, 
@@ -69,5 +70,11 @@ return [
         'guzzle' => [
             'verify' => false,
         ],
+    ],
+    
+    // STRIPE
+    'stripe' => [
+    'key' => env('STRIPE_KEY'),
+    'secret' => env('STRIPE_SECRET'),
     ],
 ];

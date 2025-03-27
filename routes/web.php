@@ -16,6 +16,29 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Http\Request;
 use App\Http\Controllers\SliderController;
 
+// STRIPE CONTROLLERS
+use App\Http\Controllers\StripePaymentController;
+use App\Http\Controllers\StripeWebhookController;
+
+// STRIPE ROUTES
+
+// Affichage du formulaire de paiement
+Route::get('/checkout', [StripePaymentController::class, 'showCheckoutForm'])->name('stripe.checkout');
+
+// Traitement du paiement (POST vers Stripe)
+Route::post('/checkout', [StripePaymentController::class, 'processPayment'])->name('checkout.process');
+
+// Redirection après succès
+Route::get('/payment/success', [StripePaymentController::class, 'paymentSuccess'])->name('payment.success');
+
+// Redirection après échec ou annulation
+Route::get('/payment/cancel', [StripePaymentController::class, 'paymentCancel'])->name('payment.cancel');
+
+// webhook stripe (appelle ton serveur quand un paiement est confirmé, sans que l’utilisateur clique ou recharge la page)
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle'])->name('stripe.webhook');
+
+
+
 // ROUTE DE BASE DE LARAVEL
 Route::get('/', function () {
     return redirect()->route('login');
@@ -205,6 +228,17 @@ Route::get('/get-coordinates', [MapController::class, 'getCoordinates'])->name('
 Route::get('/map/multiple-markers', [MapController::class, 'showMultipleMarkers'])->name('map.multiple_markers');
 
 Route::get('/map/get-markers', [MapController::class, 'getMarkers'])->name('map.get_markers');
+
+// ROUTE DE TEST D'ENVOI E-MAIL
+Route::get('/test-mail', function () {
+    Mail::raw('Test d’envoi de mail depuis Laravel.', function ($message) {
+        $message->to('thomas.kouadio@isl-edu.be')->subject('Test Email');
+    });
+
+    return 'Mail envoyé !';
+});
+
+
 
 // Routes accessibles uniquement aux administrateurs
 

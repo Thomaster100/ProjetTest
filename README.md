@@ -245,3 +245,368 @@ Pour vider le tout :
 
 
 ----------------------------------------------------------------
+
+STRIPE ET ASYNCHRONE
+
+# Intégration de Stripe avec Laravel (Paiement + Email de confirmation)
+
+## Objectif
+
+- Créer un bouton de paiement avec **Stripe Checkout**.
+- Rediriger l'utilisateur vers un terminal de paiement Stripe.
+- Détecter si le paiement a été **réussi** via un **webhook Stripe**.
+- Déclencher un **événement Laravel** (`PaymentSucceeded`) et un **listener** (`SendPaymentConfirmationEmail`) pour **envoyer un email**.
+- Expliquer le concept **d’asynchrone / communication en temps réel**.
+
+## Étape 1 : Installer Stripe
+
+```bash
+composer require stripe/stripe-php
+```
+
+## Étape 2 : Configuration `.env`
+
+```env
+STRIPE_KEY=pk_test_XXXXXXXXXXXXXXXXXXXXXXXX
+STRIPE_SECRET=sk_test_XXXXXXXXXXXXXXXXXXXXXXXX
+```
+
+Dans `config/services.php` :
+
+```php
+'stripe' => [
+    'key' => env('STRIPE_KEY'),
+    'secret' => env('STRIPE_SECRET'),
+],
+```
+
+##  Étape 3 : StripePaymentController
+
+```bash
+php artisan make:controller StripePaymentController
+```
+
+### Méthodes du contrôleur :
+
+```php
+public function showCheckoutForm() {
+    return view('payment.checkout');
+}
+
+public function checkout() {
+    Stripe::setApiKey(config('services.stripe.secret'));
+
+    $session = Session::create([
+        'payment_method_types' => ['card'],
+        'line_items' => [[
+            'price_data' => [
+                'currency' => 'eur',
+                'product_data' => ['name' => 'eBook Laravel'],
+                'unit_amount' => 1000,
+            ],
+            'quantity' => 1,
+        ]],
+        'mode' => 'payment',
+        'success_url' => route('payment.success') . '?session_id={CHECKOUT_SESSION_ID}',
+        'cancel_url' => route('payment.cancel'),
+    ]);
+
+    return redirect($session->url);
+}
+
+public function success() {
+    return view('payment.success');
+}
+
+public function cancel() {
+    return view('payment.cancel');
+}
+```
+
+## Étape 4 : Routes (`routes/web.php`)
+
+```php
+use App\Http\Controllers\StripePaymentController;
+
+Route::get('/checkout', [StripePaymentController::class, 'showCheckoutForm'])->name('stripe.checkout');
+Route::post('/checkout', [StripePaymentController::class, 'checkout'])->name('payment.process');
+Route::get('/success', [StripePaymentController::class, 'success'])->name('payment.success');
+Route::get('/cancel', [StripePaymentController::class, 'cancel'])->name('payment.cancel');
+```
+
+## Étape 5 : StripeWebhookController
+
+```bash
+php artisan make:controller StripeWebhookController
+```
+
+```php
+public function handle(Request $request) {
+    $payload = $request->getContent();
+    $event = json_decode($payload);
+
+    if ($event->type === 'checkout.session.completed') {
+        $session = $event->data->object;
+        event(new PaymentSucceeded($session->customer_email, $session->id));
+    }
+
+    return response()->json(['status' => 'received']);
+}
+```
+
+Dans les routes :
+
+```php
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle']);
+```
+
+## Étape 6 : Événement PaymentSucceeded
+
+```bash
+php artisan make:event PaymentSucceeded
+```
+
+```php
+public function __construct(public string $email, public string $stripeId) {}
+```
+
+## Étape 7 : Listener SendPaymentConfirmationEmail
+
+```bash
+php artisan make:listener SendPaymentConfirmationEmail
+```
+
+```php
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\PaymentConfirmationNotification;
+
+public function handle(PaymentSucceeded $event) {
+    Notification::route('mail', $event->email)
+        ->notify(new PaymentConfirmationNotification($event->stripeId));
+}
+```
+
+## Étape 8 : Notification PaymentConfirmationNotification
+
+```bash
+php artisan make:notification PaymentConfirmationNotification
+```
+
+```php
+public function __construct(public string $stripeId) {}
+
+public function toMail($notifiable) {
+    return (new MailMessage)
+        ->subject('Confirmation de paiement')
+        ->line("Merci pour votre achat !")
+        ->line("Identifiant de transaction : {$this->stripeId}")
+        ->line("Nous vous remercions pour votre confiance.");
+}
+```
+
+## Étape 9 : EventServiceProvider
+
+Fichier `app/Providers/EventServiceProvider.php` :
+
+```php
+protected $listen = [
+    App\Events\PaymentSucceeded::class => [
+        App\Listeners\SendPaymentConfirmationEmail::class,
+    ],
+];
+```
+
+## Étape 10 : Configuration Mail
+
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=sandbox.smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your_mailtrap_username
+MAIL_PASSWORD=your_mailtrap_password
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS=no-reply@laravelapp.test
+MAIL_FROM_NAME="Laravel App"
+```
+
+## Étape 11 : Tester le flux
+
+- Lancer `php artisan serve`
+- Accéder à `/checkout`
+- Payer avec une carte test `4242 4242 4242 4242`
+- Stripe redirige vers `/success`
+- Stripe appelle `/stripe/webhook`
+- Événement déclenché
+- Email envoyé
+
+## Étape 12 : Nettoyer les caches
+
+```bash
+php artisan optimize:clear
+php artisan event:cache
+```
+
+## Asynchrone & Webhook
+
+- Stripe n’attend pas Laravel : il envoie une requête à `/stripe/webhook`
+- Laravel écoute passivement puis agit
+- Le traitement se fait en arrière-plan (event + listener)
+
+## Schéma
+
+```
+[User] 
+   | Cliquez paiement
+   v
+[Laravel] → Stripe Checkout
+   ^                  |
+   |                  v
+[Stripe] ← Webhook ← Paiement OK
+   |
+   v
+Événement → Listener → Notification → Mail
+```
+
+
+# Explications détaillées de l’intégration Stripe (Laravel 11)
+
+Ce fichier explique pas à pas chaque étape de l'intégration Stripe dans un projet Laravel 11 avec envoi d'e-mail asynchrone après le paiement.
+
+## 1. Installation des dépendances Stripe
+
+```bash
+composer require stripe/stripe-php
+```
+
+## 2. Configuration de l'API Stripe
+
+Ajoute tes clés dans `.env` :
+
+```env
+STRIPE_KEY=pk_test_XXXX
+STRIPE_SECRET=sk_test_XXXX
+```
+
+Et dans `config/services.php` :
+
+```php
+'stripe' => [
+    'key' => env('STRIPE_KEY'),
+    'secret' => env('STRIPE_SECRET'),
+],
+```
+
+## 3. Contrôleur principal : `StripePaymentController`
+
+Ce contrôleur gère :
+- La vue avec le bouton de paiement.
+- La redirection vers Stripe.
+- La gestion des retours (succès, annulation).
+
+## 4. Création du checkout
+
+```php
+$session = Session::create([
+    'payment_method_types' => ['card'],
+    'line_items' => [[
+        'price_data' => [
+            'currency' => 'eur',
+            'product_data' => [
+                'name' => 'eBook Laravel',
+            ],
+            'unit_amount' => 1000,
+        ],
+        'quantity' => 1,
+    ]],
+    'mode' => 'payment',
+    'success_url' => route('payment.success') . '?session_id={CHECKOUT_SESSION_ID}',
+    'cancel_url' => route('payment.cancel'),
+]);
+```
+
+## 5. Routes (dans `routes/web.php`)
+
+```php
+use App\Http\Controllers\StripePaymentController;
+use App\Http\Controllers\StripeWebhookController;
+
+Route::get('/checkout', [StripePaymentController::class, 'showCheckoutForm'])->name('checkout.form');
+Route::post('/checkout', [StripePaymentController::class, 'checkout'])->name('stripe.checkout');
+Route::get('/success', [StripePaymentController::class, 'success'])->name('payment.success');
+Route::get('/cancel', [StripePaymentController::class, 'cancel'])->name('payment.cancel');
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle'])->name('stripe.webhook');
+```
+
+## 6. Webhook : `StripeWebhookController`
+
+Ce contrôleur reçoit l’événement Stripe et déclenche un événement Laravel :
+
+```php
+if ($event->type === 'checkout.session.completed') {
+    $session = $event->data->object;
+    event(new PaymentSucceeded($session->customer_email, $session->id));
+}
+```
+
+## 7. Événement : `PaymentSucceeded`
+
+Déclenché automatiquement depuis le webhook.
+
+```php
+class PaymentSucceeded implements ShouldBroadcast {
+    public function __construct(public string $email, public string $stripeId) {}
+}
+```
+
+## 8. Listener : `SendPaymentConfirmationEmail`
+
+Ce listener écoute l’événement `PaymentSucceeded` et envoie un mail :
+
+```php
+public function handle(PaymentSucceeded $event) {
+    Notification::route('mail', $event->email)
+        ->notify(new PaymentConfirmationNotification($event->stripeId));
+}
+```
+
+## 9. Notification : `PaymentConfirmationNotification`
+
+```php
+public function toMail($notifiable) {
+    return (new MailMessage)
+        ->subject('Confirmation de paiement')
+        ->line('Merci pour votre achat !')
+        ->line("ID de session Stripe : {$this->stripeId}");
+}
+```
+
+## 10. Liaison des événements / listeners
+
+Dans Laravel 11, on utilise `bootstrap/app.php` :
+
+```php
+use App\Events\PaymentSucceeded;
+use App\Listeners\SendPaymentConfirmationEmail;
+
+Event::listen(PaymentSucceeded::class, SendPaymentConfirmationEmail::class);
+```
+
+## 11. Tester le flux
+
+- Lance le serveur Laravel : `php artisan serve`
+- Lance le tunnel Stripe : `stripe listen --forward-to localhost:8000/stripe/webhook`
+- Ouvre `/checkout` dans le navigateur
+- Effectue le paiement
+- Vérifie la réception de l’e-mail dans Mailtrap
+
+## 12. Commandes utiles
+
+```bash
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+php artisan cache:clear
+composer dump-autoload
+```
+
+---
